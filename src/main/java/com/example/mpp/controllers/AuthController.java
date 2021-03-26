@@ -1,8 +1,6 @@
 package com.example.mpp.controllers;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -51,7 +49,7 @@ public class AuthController {
 	@Autowired
 	JwtUtils jwtUtils;
 
-	@PostMapping("/signin")
+	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -77,13 +75,13 @@ public class AuthController {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Error: Username is already taken!"));
+					.body(new MessageResponse("Username already takem"));
 		}
 
 		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Error: Email is already in use!"));
+					.body(new MessageResponse("Account with this Email found"));
 		}
 
 		// Create new user's account
@@ -107,8 +105,8 @@ public class AuthController {
 					roles.add(adminRole);
 
 					break;
-				case "mod":
-					Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+				case "teller":
+					Role modRole = roleRepository.findByName(ERole.ROLE_TELLER)
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 					roles.add(modRole);
 
@@ -123,7 +121,9 @@ public class AuthController {
 
 		user.setRoles(roles);
 		userRepository.save(user);
+		String message = "User sign up as " + user.getRoles();
 
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		ArrayList<Role> m = new ArrayList<>(user.getRoles());
+		return ResponseEntity.ok(new MessageResponse(message));
 	}
 }
