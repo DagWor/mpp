@@ -29,6 +29,8 @@ public class User {
   @Size(max = 120)
   private String password;
 
+  private Branch branch;
+
   @DBRef
   private Set<Role> roles = new HashSet<>();
 
@@ -80,4 +82,5 @@ public class User {
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
+
 }
