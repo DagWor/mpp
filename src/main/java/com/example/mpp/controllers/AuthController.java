@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import com.example.mpp.models.Branch;
+import com.example.mpp.repository.BranchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,6 +45,9 @@ public class AuthController {
 
 	@Autowired
 	RoleRepository roleRepository;
+
+	@Autowired
+	BranchRepository branchRepository;
 
 	@Autowired
 	PasswordEncoder encoder;
@@ -93,11 +97,13 @@ public class AuthController {
 					.body(new MessageResponse("Account with this Email found"));
 		}
 
+		Branch branch = branchRepository.save(new Branch());
+
+
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), 
 							 signUpRequest.getEmail(),
-							 encoder.encode(signUpRequest.getPassword()),
-							  new Branch());
+							 encoder.encode(signUpRequest.getPassword()));
 
 		Set<String> strRoles = signUpRequest.getRoles();
 		Set<Role> roles = new HashSet<>();
