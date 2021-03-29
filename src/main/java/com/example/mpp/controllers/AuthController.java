@@ -34,6 +34,7 @@ import com.example.mpp.security.services.UserDetailsImpl;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
+
 public class AuthController {
 	@Autowired
 	AuthenticationManager authenticationManager;
@@ -50,6 +51,12 @@ public class AuthController {
 	@Autowired
 	JwtUtils jwtUtils;
 
+	
+	@RequestMapping("/index")
+	public String test() {
+		return "index";
+	}
+	
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -72,6 +79,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
+	
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
