@@ -1,6 +1,6 @@
 package com.example.mpp.models;
 
-public enum RoleType {
+public enum ERole {
   ROLE_USER,
   ROLE_TELLER,
   ROLE_ADMIN

@@ -8,13 +8,13 @@ public class Role {
   @Id
   private String id;
 
-  private RoleType name;
+  private ERole name;
 
   public Role() {
 
   }
 
-  public Role(RoleType name) {
+  public Role(ERole name) {
     this.name = name;
   }
 
@@ -26,11 +26,11 @@ public class Role {
     this.id = id;
   }
 
-  public RoleType getName() {
+  public ERole getName() {
     return name;
   }
 
-  public void setName(RoleType name) {
+  public void setName(ERole name) {
     this.name = name;
   }
 }
