@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.example.mpp.models.Branch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -70,7 +71,7 @@ public class AuthController {
 												 roles));
 	}
 
-	@PostMapping("/create-customer")
+	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
@@ -87,7 +88,8 @@ public class AuthController {
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), 
 							 signUpRequest.getEmail(),
-							 encoder.encode(signUpRequest.getPassword()));
+							 encoder.encode(signUpRequest.getPassword()),
+							  new Branch());
 
 		Set<String> strRoles = signUpRequest.getRoles();
 		Set<Role> roles = new HashSet<>();
@@ -121,9 +123,9 @@ public class AuthController {
 
 		user.setRoles(roles);
 		userRepository.save(user);
-		String message = "User sign up as " + user.getRoles();
+		String message = "User sign up as " + user.getUsername();
 
-		ArrayList<Role> m = new ArrayList<>(user.getRoles());
+//		ArrayList<Role> m = new ArrayList<>(user.getRoles());
 		return ResponseEntity.ok(new MessageResponse(message));
 	}
 }
