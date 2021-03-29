@@ -29,19 +29,16 @@ public class User {
   @Size(max = 120)
   private String password;
 
-  private Branch branch;
-
   @DBRef
   private Set<Role> roles = new HashSet<>();
 
   public User() {
   }
 
-  public User(String username, String email, String password, Branch branch) {
+  public User(String username, String email, String password) {
     this.username = username;
     this.email = email;
     this.password = password;
-    this.branch = branch;
   }
 
   public String getId() {
