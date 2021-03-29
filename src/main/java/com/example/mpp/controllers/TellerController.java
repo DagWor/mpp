@@ -8,12 +8,14 @@ import com.example.mpp.payload.request.LoginRequest;
 import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.JwtResponse;
 import com.example.mpp.payload.response.MessageResponse;
+import com.example.mpp.repository.BranchRepository;
 import com.example.mpp.repository.RoleRepository;
 import com.example.mpp.repository.UserRepository;
 import com.example.mpp.security.jwt.JwtUtils;
 import com.example.mpp.security.services.UserDetailsImpl;
 import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,10 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -44,6 +44,9 @@ public class TellerController {
     RoleRepository roleRepository;
 
     @Autowired
+    BranchRepository branchRepository;
+
+    @Autowired
     PasswordEncoder encoder;
 
     @Autowired
@@ -51,46 +54,99 @@ public class TellerController {
 
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-customer")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
+    public ResponseEntity<?> registerCustomer(@Valid @RequestBody SignupRequest signUpRequest) {
+        try {
+            if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+                return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Username already taken"));
+            }
+            else
+            if(userRepository.existsByUsername(signUpRequest.getEmail())){
+                return ResponseEntity
+                        .badRequest()
+                        .body(new MessageResponse("Email already taken"));
+            }
+            else{
+                Set<Role> roles = new HashSet<>();
+                Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(userRole);
+                Branch branch = new Branch();
+                branchRepository.save(branch);
+
+                User _user = userRepository.save(new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getPassword()));
+                _user.setRoles(roles);
+                return new ResponseEntity<>(_user, HttpStatus.CREATED);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Account with this Email found"));
-        }
-
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()),
-                new Branch());
-
-        Set<String> strRoles = signUpRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        }
-
-        user.setRoles(roles);
-        userRepository.save(user);
-        String message = "User sign up as " + user.getRoles();
-
-        ArrayList<Role> m = new ArrayList<>(user.getRoles());
-        return ResponseEntity.ok(new MessageResponse(message));
     }
 
+    @GetMapping("/customers/{id}")
+    @PreAuthorize("hasRole('TELLER')")
+    public ResponseEntity<List<User>> getAllCustomers(@PathVariable("id") String id){
+        try{
+
+            Optional<Branch> branch = branchRepository.findById(id);
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+            List<User> users = new ArrayList<>(userRepository.findAllByRolesContainsAndAndBranch(userRole, branch.get()));
+
+
+            if(users.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+            return new ResponseEntity<>(users, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /*@GetMapping("/customers")
+    @PreAuthorize("hasRole('TELLER')")
+    public ResponseEntity<List<User>> getAllBranchCustomers(@ReBranch branch){
+        try{
+
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+            List<User> users = new ArrayList<>(userRepository.findAllByRolesContainsAndAndBranch(userRole, branch));
+
+
+            if(users.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+            return new ResponseEntity<>(users, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }*/
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getCustomerById(@PathVariable("id") String id) {
+        Optional<User> userData = userRepository.findById(id);
+
+        return userData.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/customers/{id}")
+    public ResponseEntity<User> updateCustomer(@PathVariable("id") String id, @RequestBody User newData) {
+        Optional<User> userData = userRepository.findById(id);
+
+        if (userData.isPresent()) {
+            User _user = userData.get();
+            _user.setUsername(newData.getUsername());
+            _user.setEmail(newData.getEmail());
+            _user.setPassword(newData.getPassword());
+            _user.setRoles(newData.getRoles());
+            return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     @GetMapping("/deposit")
     @PreAuthorize("hasRole('TELLER')")
