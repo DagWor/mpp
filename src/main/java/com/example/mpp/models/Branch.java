@@ -1,5 +1,6 @@
 package com.example.mpp.models;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,8 +9,11 @@ import java.util.List;
 
 @Document(collection = "branch")
 public class Branch {
+    @Id
+    private String id;
 
     private int depositAmount = 98987;
+    private String branchName;
 
     private List<User> customers = new ArrayList<>();
     private List<User> tellers = new ArrayList<>();
@@ -71,6 +75,10 @@ public class Branch {
 
     public void setAdmin(User user){
         this.admin = user;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public int getDepositAmuont() {

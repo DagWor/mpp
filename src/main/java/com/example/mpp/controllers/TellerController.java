@@ -73,10 +73,22 @@ public class TellerController {
                         .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                 roles.add(userRole);
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                User teller = userRepository.findUserByUsername(auth.getName());
+                Branch branch = branchRepository.findBranchByTellersContains(teller);
 
 
-                User _user = userRepository.save(new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getPassword()));
+                User _user = userRepository.save(new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+                        encoder.encode(signUpRequest.getPassword())));
                 _user.setRoles(roles);
+
+                userRepository.save(_user);
+
+
+                List<User> customers = new ArrayList<>();
+                customers = branch.getCustomers();
+                customers.add(_user);
+                branch.setCustomers(customers);
+                branchRepository.save(branch);
                 return new ResponseEntity<>(_user, HttpStatus.CREATED);
             }
         } catch (Exception e) {
@@ -85,24 +97,29 @@ public class TellerController {
     }
 
     @GetMapping("/customers/{id}")
-    @PreAuthorize("hasRole('TELLER')")
-    public ResponseEntity<List<User>> getAllCustomers(@PathVariable("id") String id){
-        try{
+    @PreAuthorize("hasRole('TELLER') or hasRole('ADMIN') or hasRole('HEAD_OFFICE')")
+    public ResponseEntity<List<User>> getAllBranchCustomers(@PathVariable("id") String id) {
+        ResponseEntity<List<User>> result;
+        try {
 
             Optional<Branch> branch = branchRepository.findById(id);
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
-            List<User> users = new ArrayList<>(userRepository.findAllByRolesContainsAndAndBranch(userRole, branch.get()));
+            Branch branch1 = branch.get();
+            List<User> users = branch1.getBranchCustomers();
 
 
-            if(users.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-            return new ResponseEntity<>(users, HttpStatus.OK);
+            if (users.isEmpty()) {
+                result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                result = new ResponseEntity<>(users, HttpStatus.OK);
+            }
 
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return result;
     }
 
     /*@GetMapping("/customers")

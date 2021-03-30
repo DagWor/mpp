@@ -21,14 +21,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.Option;
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -47,6 +45,9 @@ public class AdminController {
 
 	@Autowired
 	MongoOperations mongoOperations;
+
+	@Autowired
+	PasswordEncoder encoder;
 
 	MongoTemplate mongoTemplate;
 
@@ -73,28 +74,53 @@ public class AdminController {
 
 				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-				User _user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getPassword());
+				User _user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+						encoder.encode(signUpRequest.getPassword()));
 				User x = userRepository.findUserByUsername(auth.getName());
-//
-//				updateBranch(branch, x);
-				userRepository.save(_user);
+
 				_user.setRoles(roles);
+				userRepository.save(_user);
 
 
 				Branch branch = branchRepository.findBranchByAdmin_Email(x.getEmail());
-				List<User> tellers = branch.getBranchTellers();
+				List<User> tellers = new ArrayList<>();
+				tellers = branch.getBranchTellers();
 				tellers.add(_user);
-//				branch.setBranchTellers(tellers);
 
 				branch.setBranchTellers(tellers);
-				mongoOperations.save(branch, "branch");
+				branchRepository.save(branch);
 
-//				branchRepository.save(branch);
 				return new ResponseEntity<>(_user, HttpStatus.CREATED);
 			}
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@GetMapping("/tellers/{id}")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OFFICE')")
+	public ResponseEntity<List<User>> getAllBranchTellers(@PathVariable("id") String id) {
+		ResponseEntity<List<User>> result;
+		try {
+
+			Optional<Branch> branch = branchRepository.findById(id);
+			Role userRole = roleRepository.findByName(ERole.ROLE_TELLER)
+					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+			Branch branch1 = branch.get();
+			List<User> users = branch1.getBranchTellers();
+
+
+			if (users.isEmpty()) {
+				result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			} else {
+				result = new ResponseEntity<>(users, HttpStatus.OK);
+			}
+
+		} catch (Exception e) {
+			result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return result;
 	}
 
 	
