@@ -106,7 +106,8 @@ public class TellerController {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
-            List<User> users = new ArrayList<>(userRepository.findAllByRolesAndAndBranches(userRole, branch.get()));
+            Branch branch1 = branch.get();
+            List<User> users = branch1.getBranchCustomers();
 
 
             if (users.isEmpty()) {
