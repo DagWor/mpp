@@ -83,7 +83,6 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
@@ -134,10 +133,11 @@ public class AuthController {
 			});
 		}
 
+		Role modRole = roleRepository.findByName(ERole.ROLE_HEAD_OFFICE)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(modRole);
 		user.setRoles(roles);
 		userRepository.save(user);
-		Branch b1 = new Branch(user);
-		branchRepository.save(b1);
 		String message = "User sign up as " + user.getUsername();
 
 		return ResponseEntity.ok(new MessageResponse(message));
