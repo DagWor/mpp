@@ -56,9 +56,9 @@ public class AuthController {
 	JwtUtils jwtUtils;
 
 	
-	@RequestMapping("/index")
+	@RequestMapping("/signup")
 	public String test() {
-		return "index";
+		return "login";
 	}
 	
 	@PostMapping("/login")
