@@ -32,6 +32,9 @@ public class User {
   @DBRef
   private Set<Role> roles = new HashSet<>();
 
+  @DBRef
+  private Branch branch;
+
   public User() {
   }
 
@@ -81,4 +84,11 @@ public class User {
     this.roles = roles;
   }
 
+  public Branch getBranch() {
+    return branch;
+  }
+
+  public void setBranch(Branch branch) {
+    this.branch = branch;
+  }
 }
