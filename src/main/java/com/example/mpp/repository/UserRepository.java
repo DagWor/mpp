@@ -20,6 +20,8 @@ public interface UserRepository extends MongoRepository<User, String> {
 
   List<User> findUsersByRoles(Set<Role> roles);
 
+  User findUserByUsername(String username);
+
 //  Boolean existsAllByema;
   List<User> findAllByRolesContainsAndAndBranch(Role role, Branch branch);
 }
