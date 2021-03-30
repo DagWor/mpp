@@ -1,6 +1,8 @@
 package com.example.mpp.models;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
@@ -29,11 +31,9 @@ public class User {
   @Size(max = 120)
   private String password;
 
-  @DBRef
   private Set<Role> roles = new HashSet<>();
 
-  @DBRef
-  private Branch branch;
+  private List<Branch> branches = new ArrayList<>();
 
   public User() {
   }
@@ -84,11 +84,11 @@ public class User {
     this.roles = roles;
   }
 
-  public Branch getBranch() {
-    return branch;
+  public List<Branch> getBranches() {
+    return branches;
   }
 
-  public void setBranch(Branch branch) {
-    this.branch = branch;
+  public void setBranches(List<Branch> branch) {
+    this.branches = branch;
   }
 }
