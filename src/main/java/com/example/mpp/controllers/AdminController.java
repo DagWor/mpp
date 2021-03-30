@@ -97,6 +97,32 @@ public class AdminController {
 		}
 	}
 
+	@GetMapping("/tellers/{id}")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OFFICE')")
+	public ResponseEntity<List<User>> getAllBranchTellers(@PathVariable("id") String id) {
+		ResponseEntity<List<User>> result;
+		try {
+
+			Optional<Branch> branch = branchRepository.findById(id);
+			Role userRole = roleRepository.findByName(ERole.ROLE_TELLER)
+					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+			Branch branch1 = branch.get();
+			List<User> users = branch1.getBranchTellers();
+
+
+			if (users.isEmpty()) {
+				result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			} else {
+				result = new ResponseEntity<>(users, HttpStatus.OK);
+			}
+
+		} catch (Exception e) {
+			result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return result;
+	}
+
 	
 	@GetMapping("/total-withdrawal")
 	public double totalWithdrawal() {
