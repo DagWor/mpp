@@ -72,8 +72,8 @@ public class TellerController {
                 Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                         .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                 roles.add(userRole);
-                Branch branch = new Branch();
-                branchRepository.save(branch);
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
 
                 User _user = userRepository.save(new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getPassword()));
                 _user.setRoles(roles);
@@ -163,8 +163,9 @@ public class TellerController {
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('TELLER')")
     public double totalDeposit(){
-        Branch b = new Branch();
-        return b.getDepositAmuont();
+//        Branch b = new Branch();
+//        return b.getDepositAmuont();
+        return 0.0;
     }
 
     @GetMapping("/balance")
