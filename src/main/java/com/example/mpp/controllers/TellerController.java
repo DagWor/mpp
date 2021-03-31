@@ -1,25 +1,17 @@
 package com.example.mpp.controllers;
 
-import com.example.mpp.models.Branch;
-import com.example.mpp.models.ERole;
-import com.example.mpp.models.Role;
-import com.example.mpp.models.User;
-import com.example.mpp.payload.request.LoginRequest;
+import com.example.mpp.models.*;
 import com.example.mpp.payload.request.SignupRequest;
-import com.example.mpp.payload.response.JwtResponse;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.BranchRepository;
 import com.example.mpp.repository.RoleRepository;
 import com.example.mpp.repository.UserRepository;
 import com.example.mpp.security.jwt.JwtUtils;
-import com.example.mpp.security.services.UserDetailsImpl;
-import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -62,18 +52,24 @@ public class TellerController {
                     .body(new MessageResponse("Username already taken"));
             }
             else
-            if(userRepository.existsByUsername(signUpRequest.getEmail())){
+            if(userRepository.existsByEmail(signUpRequest.getEmail())){
                 return ResponseEntity
                         .badRequest()
                         .body(new MessageResponse("Email already taken"));
             }
-            else{
+            else {
                 Set<Role> roles = new HashSet<>();
+
                 Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                         .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
                 roles.add(userRole);
+
+
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
                 User teller = userRepository.findUserByUsername(auth.getName());
+
                 Branch branch = branchRepository.findBranchByTellersContains(teller);
 
 
@@ -84,11 +80,12 @@ public class TellerController {
                 userRepository.save(_user);
 
 
-                List<User> customers = new ArrayList<>();
-                customers = branch.getCustomers();
+                List<User> customers = branch.getCustomers();
                 customers.add(_user);
                 branch.setCustomers(customers);
                 branchRepository.save(branch);
+
+
                 return new ResponseEntity<>(_user, HttpStatus.CREATED);
             }
         } catch (Exception e) {
@@ -103,8 +100,6 @@ public class TellerController {
         try {
 
             Optional<Branch> branch = branchRepository.findById(id);
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
             Branch branch1 = branch.get();
             List<User> users = branch1.getBranchCustomers();
@@ -165,9 +160,11 @@ public class TellerController {
         }
     }
 
-    @GetMapping("/deposit")
+
+
+    @PostMapping("/deposit")
     @PreAuthorize("hasRole('TELLER')")
-    public void makeDeposit(double amount){
+    public void makeDeposit(){
 
     }
 
@@ -180,8 +177,6 @@ public class TellerController {
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('TELLER')")
     public double totalDeposit(){
-//        Branch b = new Branch();
-//        return b.getDepositAmuont();
         return 0.0;
     }
 
