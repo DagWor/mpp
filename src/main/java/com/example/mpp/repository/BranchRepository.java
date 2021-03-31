@@ -13,8 +13,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import com.example.mpp.models.User;
 
 public interface BranchRepository extends MongoRepository<Branch, String> {
-    Branch findBranchByAdmin(User user);
     Branch findBranchByAdmin_Email(String email);
-    Branch findAllByAdmin_Email(String email);
     Branch findBranchByTellersContains(User user);
 }
