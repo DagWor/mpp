@@ -15,6 +15,23 @@ public class Branch {
     private int depositAmount = 98987;
     private String branchName;
 
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
+    public int getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(int branchId) {
+        this.branchId = branchId;
+    }
+
+    private int branchId;
     private List<User> customers = new ArrayList<>();
     private List<User> tellers = new ArrayList<>();
 

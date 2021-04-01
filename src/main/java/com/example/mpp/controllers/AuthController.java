@@ -31,6 +31,7 @@ import com.example.mpp.repository.RoleRepository;
 import com.example.mpp.repository.UserRepository;
 import com.example.mpp.security.jwt.JwtUtils;
 import com.example.mpp.security.services.UserDetailsImpl;
+import org.springframework.web.servlet.ModelAndView;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -55,11 +56,11 @@ public class AuthController {
 	@Autowired
 	JwtUtils jwtUtils;
 
-	
-	@RequestMapping("/signup")
-	public String test() {
-		return "login";
-	}
+
+//	@PostMapping("/login")
+//	public String firstPage() {
+//		return "index";
+//	}
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {

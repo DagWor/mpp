@@ -1,35 +1,48 @@
 package com.example.mpp.models;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
+@Document(collection="Transaction")
 public class Transaction {
 
     @Id
-    private int transactionId;
+    private String transactionId;
     private LocalDate transactionDate;
+    @NotBlank
     private double amount;
     private int toAccount;
     private int fromAccount;
     private int branchId;
+  private TransactionType type;
+  public Transaction(){
 
-    public Transaction(int transactionId, LocalDate transactionDate, double amount, int toAccount, int fromAccount, int branchId) {
-        this.transactionId = transactionId;
+  }
+
+    public Transaction( LocalDate transactionDate, double amount, int toAccount, int fromAccount, int branchId,TransactionType type) {
+
         this.transactionDate = transactionDate;
         this.amount = amount;
         this.toAccount = toAccount;
         this.fromAccount = fromAccount;
         this.branchId = branchId;
+        this.type=type;
+    }
+    public TransactionType getType() {
+        return type;
     }
 
-    public int getTransactionId() {
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
+    public String getTransactionId() {
         return transactionId;
     }
 
-    public void setTransactionId(int transactionId) {
-        this.transactionId = transactionId;
-    }
+
 
     public LocalDate getTransactionDate() {
         return transactionDate;

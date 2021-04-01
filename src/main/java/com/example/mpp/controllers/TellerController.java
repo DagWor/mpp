@@ -1,16 +1,11 @@
 package com.example.mpp.controllers;
 
-import com.example.mpp.models.Branch;
-import com.example.mpp.models.ERole;
-import com.example.mpp.models.Role;
-import com.example.mpp.models.User;
+import com.example.mpp.models.*;
 import com.example.mpp.payload.request.LoginRequest;
 import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.JwtResponse;
 import com.example.mpp.payload.response.MessageResponse;
-import com.example.mpp.repository.BranchRepository;
-import com.example.mpp.repository.RoleRepository;
-import com.example.mpp.repository.UserRepository;
+import com.example.mpp.repository.*;
 import com.example.mpp.security.jwt.JwtUtils;
 import com.example.mpp.security.services.UserDetailsImpl;
 import org.apache.logging.log4j.message.Message;
@@ -26,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -51,10 +47,42 @@ public class TellerController {
 
     @Autowired
     JwtUtils jwtUtils;
+    @Autowired
+   private AccountRepository accountRepository;
+    @Autowired
+    TransactionRepository transactionRepository;
+
+    @Autowired
+    private UserAccessRepository userAccessRepository;
 
     @PreAuthorize("hasRole('TELLER')")
+    @PostMapping("/create-account")
+    public ResponseEntity<?> createAccount(@Valid @RequestBody AccountInfo accountInfo){
+        try{
+             //   public AccountInfo( int accountNumber, double balance, AccountType type, LocalDate currentDate) {
+
+             if(!accountRepository.existsAccountInfoByAccountNumber(accountInfo.getAccountNumber())){
+                  AccountInfo accountInfo1=new AccountInfo(accountInfo.getAccountNumber(), accountInfo.getBalance(),accountInfo.getType()   ,accountInfo.getCurrentDate(),accountInfo.getCustomerId());
+                 accountInfo1.setCurrentDate(LocalDate.now());
+                 accountRepository.save(accountInfo1);
+             }
+             else{
+
+             }
+
+
+                return new ResponseEntity<>(accountInfo, HttpStatus.CREATED);
+        }
+    catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    }
+    @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-customer")
-    public ResponseEntity<?> registerCustomer(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerCustomer(@Valid @RequestBody SignupRequest signUpRequest,@RequestBody AccountInfo accountInfo) {
+
+
+
         try {
             if (userRepository.existsByUsername(signUpRequest.getUsername())) {
                 return ResponseEntity
@@ -82,7 +110,14 @@ public class TellerController {
                 _user.setRoles(roles);
 
                 userRepository.save(_user);
+                ///  create account
 
+
+
+                if(!accountRepository.existsAccountInfoByAccountNumber(accountInfo.getAccountNumber())){
+                    accountInfo.setAccountNumber(1000);
+                    accountRepository.save(accountInfo);
+                }
 
                 List<User> customers = new ArrayList<>();
                 customers = branch.getCustomers();
@@ -173,7 +208,38 @@ public class TellerController {
 
     @PostMapping("/withdraw")
     @PreAuthorize("hasRole('TELLER')")
-    public void makeWithdrawal(double amount){
+    public void makeWithdrawal(@RequestBody Transaction transaction){
+        if(accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())){
+
+            AccountInfo account= accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
+           if(account.getBalance()>=transaction.getAmount()){
+               Transaction transaction1=new Transaction();
+               transaction1.setType(TransactionType.WITHDRAWL);
+               transaction1.setAmount(transaction.getAmount());
+               transaction1.setFromAccount(transaction.getFromAccount());
+               transaction1.setTransactionDate(LocalDate.now());
+
+
+               // find current teller
+               Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+               User teller = userRepository.findUserByUsername(auth.getName());
+               Branch branch = branchRepository.findBranchByTellersContains(teller);
+
+
+               //branch.getBranchId()  check this line
+               transaction1.setBranchId(123);
+
+               account.setBalance(account.getBalance()- transaction.getAmount());
+               account.setCurrentDate(LocalDate.now());
+                accountRepository.save(account);
+               transactionRepository.save(transaction1);
+
+           }
+
+        } else{
+            System.out.println("Account not found");
+        }
+
 
     }
 

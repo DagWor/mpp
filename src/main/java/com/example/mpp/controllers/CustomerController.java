@@ -1,5 +1,8 @@
 package com.example.mpp.controllers;
 
+import com.example.mpp.models.Transaction;
+import com.example.mpp.repository.TransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,9 +11,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/customer")
 public class CustomerController {
 
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public void makeDeposit(double amount){
+    public void transfer(@RequestBody Transaction transaction){
+       // transactionRepository.save(transaction);
 
     }
 
@@ -19,4 +27,8 @@ public class CustomerController {
     public void makeWithdrawal(double amount){
 
     }
+
+
+
+
 }
