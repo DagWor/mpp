@@ -14,6 +14,15 @@ public class Branch {
 
     private int depositAmount = 98987;
     private String branchName;
+    private int branchId;
+    private List<Customer> customers = new ArrayList<>();
+    private List<User> tellers = new ArrayList<>();
+
+    private User admin;
+
+    public Branch(User admin){
+        this.admin = admin;
+    }
 
     public String getBranchName() {
         return branchName;
@@ -31,18 +40,7 @@ public class Branch {
         this.branchId = branchId;
     }
 
-    private int branchId;
-    private List<User> customers = new ArrayList<>();
-    private List<User> tellers = new ArrayList<>();
-
-    private User admin;
-
-    public Branch(User admin){
-        this.admin = admin;
-        tellers.add(admin);
-        customers.add(admin);
-    }
-    public void addCustomerToBranch(User user){
+    public void addCustomerToBranch(Customer user){
         customers.add(user);
     }
 
@@ -51,7 +49,7 @@ public class Branch {
         tellers.add(user);
     }
 
-    public List<User> getBranchCustomers(){
+    public List<Customer> getBranchCustomers(){
         return customers;
     }
 
@@ -67,11 +65,11 @@ public class Branch {
         this.depositAmount = depositAmount;
     }
 
-    public List<User> getCustomers() {
+    public List<Customer> getCustomers() {
         return customers;
     }
 
-    public void setCustomers(List<User> customers) {
+    public void setCustomers(List<Customer> customers) {
         this.customers = customers;
     }
 
