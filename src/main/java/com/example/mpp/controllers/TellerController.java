@@ -1,10 +1,7 @@
 package com.example.mpp.controllers;
 
 import com.example.mpp.models.*;
-<<<<<<< HEAD
 import com.example.mpp.payload.request.LoginRequest;
-=======
->>>>>>> c7b6918b72f0d6cd6204dbdf5ca2d26f42a83ac5
 import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.*;
