@@ -21,7 +21,7 @@ public class CheckingAccount extends AccountInfo implements Account{
 
     @Override
     public double getInterst() {
-
+        return 0.0;
     }
 
     @Override
