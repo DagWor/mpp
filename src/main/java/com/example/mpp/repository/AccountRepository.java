@@ -6,8 +6,10 @@ import com.example.mpp.models.CheckingAccount;
 import com.example.mpp.models.SavingAccount;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Optional;
+
 
 public interface AccountRepository extends MongoRepository<AccountInfo,Integer> {
-    AccountInfo findAccountInfoByAccountNumber(int account);
+    Optional<AccountInfo> findAccountInfoByAccountNumber(int account);
     boolean existsAccountInfoByAccountNumber(int accountNumber);
 }

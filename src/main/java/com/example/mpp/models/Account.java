@@ -2,7 +2,7 @@ package com.example.mpp.models;
 
 public interface Account {
 
-     double  getInterst();
+     void  getInterst();
      double getBalance();
      AccountType getAccountType();
      double getAccount();
