@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 
 
-public class CheckingAccount extends AccountInfo{
+public class CheckingAccount extends AccountInfo implements Account{
 
 //    private int  interstRate;
     //private AccountInfo accountInfo;
@@ -19,5 +19,18 @@ public class CheckingAccount extends AccountInfo{
     }
 
 
+    @Override
+    public double getInterst() {
 
+    }
+
+    @Override
+    public AccountType getAccountType() {
+        return null;
+    }
+
+    @Override
+    public double getAccount() {
+        return 0;
+    }
 }

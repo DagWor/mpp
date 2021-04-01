@@ -124,14 +124,9 @@ public class AdminController {
 	}
 
 	
-	@GetMapping("/total-withdrawal")
+	@PostMapping("/total-withdrawal")
 	public double totalWithdrawal() {
-		
 		return 0.0;
 	}
-	
-
-	
-	
 
 }

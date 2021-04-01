@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -31,6 +32,8 @@ public class User {
   @Size(max = 120)
   private String password;
 
+  private float balance;
+
   private Set<Role> roles = new HashSet<>();
 
   private List<Branch> branches = new ArrayList<>();
@@ -42,6 +45,7 @@ public class User {
     this.username = username;
     this.email = email;
     this.password = password;
+    this.balance = 0.0f;
   }
 
   public String getId() {
