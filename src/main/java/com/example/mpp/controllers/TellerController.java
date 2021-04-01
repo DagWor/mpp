@@ -1,11 +1,12 @@
 package com.example.mpp.controllers;
 
 import com.example.mpp.models.*;
-<<<<<<< HEAD
+
+import com.example.mpp.payload.request.DepositRequest;
 import com.example.mpp.payload.request.LoginRequest;
-=======
->>>>>>> c7b6918b72f0d6cd6204dbdf5ca2d26f42a83ac5
+
 import com.example.mpp.payload.request.SignupRequest;
+import com.example.mpp.payload.request.WithdrawalRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.*;
 import com.example.mpp.security.jwt.JwtUtils;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -51,6 +53,9 @@ public class TellerController {
 
     @Autowired
     private UserAccessRepository userAccessRepository;
+
+    @Autowired
+    DepositRepository depositRepository;
 
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-account")
@@ -206,21 +211,58 @@ public class TellerController {
 
     @PostMapping("/deposit")
     @PreAuthorize("hasRole('TELLER')")
-    public void makeDeposit(){
+    public ResponseEntity<AccountInfo> makeDeposit(@RequestBody DepositRequest transactionRequest){
+        try {
+            Optional<AccountInfo> crAccount =accountRepository.findAccountInfoByAccountNumber(transactionRequest.getAccountNumber());
+            if (crAccount.isPresent()) {
+                AccountInfo accountInfo = crAccount.get();
+                Account account=null;
+                if(accountInfo.getType().equals("CHECKIN")) {
+                    account = new CheckingAccount(transactionRequest.getAccountNumber(),accountInfo.getBalance(),"CHECKIN",LocalDate.now(),accountInfo.getCustomerId());
 
+                }
+                else if(accountInfo.getType().equals("SAVING")){
+                    account = new SavingAccount(transactionRequest.getAccountNumber(),accountInfo.getBalance(),"SAVING",LocalDate.now(),accountInfo.getCustomerId());
+
+                }
+//
+                if(account!=null){
+                    account.getInterst();
+                    accountInfo.setBalance(account.getBalance()+transactionRequest.getAmount());
+                    accountInfo.setCurrentDate(LocalDate.now());
+                    accountRepository.save(accountInfo);
+
+                    DepositTransaction transactions = new DepositTransaction(LocalDate.now(),transactionRequest.getAmount(),transactionRequest.getAccountNumber(),123);
+                    depositRepository.save(transactions);
+
+                }
+
+    //public DepositTransaction( LocalDate transactionDate, @NotBlank double amount, int toAccount, int branchId, TransactionType type) {
+
+
+                //transation to be saved
+
+                return new ResponseEntity<>(accountInfo,HttpStatus.OK);
+            }
+            else{ return  new ResponseEntity<>(HttpStatus.NO_CONTENT);}
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return  new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/withdraw")
     @PreAuthorize("hasRole('TELLER')")
-    public void makeWithdrawal(@RequestBody Transaction transaction){
-        if(accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())){
+    public void makeWithdrawal(@RequestBody WithdrawalRequest transaction){
+        if(accountRepository.existsAccountInfoByAccountNumber(transaction.getAccountNumber())){
 
-            AccountInfo account= accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
-           if(account.getBalance()>=transaction.getAmount()){
+            Optional<AccountInfo> account= accountRepository.findAccountInfoByAccountNumber(transaction.getAccountNumber());
+           if( account.isPresent() && account.get().getBalance()>=transaction.getAmount()){
                Transaction transaction1=new Transaction();
                transaction1.setType(TransactionType.WITHDRAWL);
                transaction1.setAmount(transaction.getAmount());
-               transaction1.setFromAccount(transaction.getFromAccount());
+               transaction1.setFromAccount(transaction.getAccountNumber());
                transaction1.setTransactionDate(LocalDate.now());
 
 
@@ -233,9 +275,9 @@ public class TellerController {
                //branch.getBranchId()  check this line
                transaction1.setBranchId(123);
 
-               account.setBalance(account.getBalance()- transaction.getAmount());
-               account.setCurrentDate(LocalDate.now());
-                accountRepository.save(account);
+               account.get().setBalance(account.get().getBalance()- transaction.getAmount());
+               account.get().setCurrentDate(LocalDate.now());
+                accountRepository.save(account.get());
                transactionRepository.save(transaction1);
 
            }
