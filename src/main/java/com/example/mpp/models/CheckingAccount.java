@@ -17,15 +17,10 @@ public class CheckingAccount extends AccountInfo implements Account{
 
         //accountInfo=new AccountInfo(accountNumber,balance,type,currentDate,customerId );
     }
-//
-//    public double makeDeposit(double amount){
-//        double b = getInterst();
-//        b += amount;
-//        return b;
-//    }
+
     @Override
     public void getInterst() {
-        interestRate=interestRate/365;
+        interestRate = interestRate / 365;
         //interest calculation based on specified interest rate
 
         double numberOfDays = Math.abs(ChronoUnit.DAYS.between(LocalDate.now(), super.getCurrentDate()));
