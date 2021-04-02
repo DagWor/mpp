@@ -20,7 +20,7 @@ public class AccountInfo {
     private double balance;
 
     private String type;
-        private LocalDate currentDate;
+    private LocalDate currentDate;
 
     public AccountInfo( int accountNumber, double balance,String type ,LocalDate currentDate,int customerId) {
 

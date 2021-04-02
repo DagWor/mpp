@@ -127,8 +127,8 @@ public class TellerController {
                     accountRepository.save(accountInfo);
                 }
 
-                List<User> customers = branch.getCustomers();
-                customers.add(_user);
+                List<Customer> customers = branch.getCustomers();
+                customers.add((Customer) _user);
                 branch.setCustomers(customers);
                 branchRepository.save(branch);
 
@@ -142,14 +142,14 @@ public class TellerController {
 
     @GetMapping("/customers/{id}")
     @PreAuthorize("hasRole('TELLER') or hasRole('ADMIN') or hasRole('HEAD_OFFICE')")
-    public ResponseEntity<List<User>> getAllBranchCustomers(@PathVariable("id") String id) {
-        ResponseEntity<List<User>> result;
+    public ResponseEntity<List<Customer>> getAllBranchCustomers(@PathVariable("id") String id) {
+        ResponseEntity<List<Customer>> result;
         try {
 
             Optional<Branch> branch = branchRepository.findById(id);
 
             Branch branch1 = branch.get();
-            List<User> users = branch1.getBranchCustomers();
+            List<Customer> users = branch1.getBranchCustomers();
 
 
             if (users.isEmpty()) {
@@ -217,7 +217,7 @@ public class TellerController {
             if (crAccount.isPresent()) {
                 AccountInfo accountInfo = crAccount.get();
                 Account account=null;
-                if(accountInfo.getType().equals("CHECKIN")) {
+                if(accountInfo.getType().equals("CHECKING")) {
                     account = new CheckingAccount(transactionRequest.getAccountNumber(),accountInfo.getBalance(),"CHECKIN",LocalDate.now(),accountInfo.getCustomerId());
 
                 }

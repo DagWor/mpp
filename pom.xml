@@ -86,7 +86,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-<<<<<<< HEAD
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-jasper</artifactId>
 <scope>provided</scope>
@@ -104,11 +103,7 @@
               </dependency>-->
 
 		<!--		 https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
-=======
-    <groupId>org.apache.tomcat.embed</groupId>
-    <artifactId>tomcat-embed-jasper</artifactId>
-    <scope>provided</scope>
-</dependency>
+
 <dependency>
     <groupId>javax.servlet</groupId>
     <artifactId>jstl</artifactId>
@@ -137,7 +132,6 @@
         </dependency>-->
 
 <!--		 https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
->>>>>>> c7b6918b72f0d6cd6204dbdf5ca2d26f42a83ac5
 		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
 		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
 		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->

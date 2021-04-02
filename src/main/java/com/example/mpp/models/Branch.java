@@ -16,7 +16,7 @@ public class Branch {
     private String branchName;
     private int branchId;
     private List<Customer> customers = new ArrayList<>();
-    private List<User> tellers = new ArrayList<>();
+    private List<Teller> tellers = new ArrayList<>();
 
     private User admin;
 
@@ -45,7 +45,7 @@ public class Branch {
     }
 
 
-    public void addTellerToBranch(User user){
+    public void addTellerToBranch(Teller user){
         tellers.add(user);
     }
 
@@ -53,7 +53,7 @@ public class Branch {
         return customers;
     }
 
-    public void setBranchTellers(List<User> tellers){
+    public void setBranchTellers(List<Teller> tellers){
         this.tellers = tellers;
     }
 
@@ -73,7 +73,7 @@ public class Branch {
         this.customers = customers;
     }
 
-    public List<User> getTellers() {
+    public List<Teller> getTellers() {
         return tellers;
     }
 
@@ -81,9 +81,7 @@ public class Branch {
         return admin;
     }
 
-    public List<User> getBranchTellers(){
-        return tellers;
-    }
+
     public User getBranchAdmin(){
         return admin;
     }

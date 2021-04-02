@@ -1,14 +1,10 @@
 package com.example.mpp.controllers;
 
-import com.example.mpp.models.Branch;
-import com.example.mpp.models.ERole;
-import com.example.mpp.models.Role;
-import com.example.mpp.models.User;
+import com.example.mpp.models.*;
+import com.example.mpp.payload.request.CreateTeller;
 import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
-import com.example.mpp.repository.BranchRepository;
-import com.example.mpp.repository.RoleRepository;
-import com.example.mpp.repository.UserRepository;
+import com.example.mpp.repository.*;
 import com.mongodb.WriteResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -44,7 +40,14 @@ public class AdminController {
 	BranchRepository branchRepository;
 
 	@Autowired
+	TellerRepository tellerRepository;
+
+	@Autowired
 	MongoOperations mongoOperations;
+
+	@Autowired
+	AdminRepository adminRepository;
+
 
 	@Autowired
 	PasswordEncoder encoder;
@@ -53,7 +56,7 @@ public class AdminController {
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/create-teller")
-	public ResponseEntity<?> registerTeller(@Valid @RequestBody SignupRequest signUpRequest) {
+	public ResponseEntity<?> registerTeller(@Valid @RequestBody CreateTeller signUpRequest) {
 		try {
 			if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 				return ResponseEntity
@@ -73,24 +76,25 @@ public class AdminController {
 				roles.add(userRole);
 
 				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+				Admin admin = adminRepository.findAdminByUsername(auth.getName());
+				Branch branch = branchRepository.findBranchByAdmin(admin);
 
-				User _user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-						encoder.encode(signUpRequest.getPassword()));
-				User x = userRepository.findUserByUsername(auth.getName());
+				User user1 = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getEmail());
+				user1.setRoles(roles);
+				userRepository.save(user1);
 
-				_user.setRoles(roles);
-				userRepository.save(_user);
+				Teller teller = new Teller(user1, signUpRequest.getFirstName(), signUpRequest.getLastName());
 
+				teller.setBranchId(branch.getId());
+				tellerRepository.save(teller);
 
-				Branch branch = branchRepository.findBranchByAdmin_Email(x.getEmail());
-				List<User> tellers = new ArrayList<>();
-				tellers = branch.getBranchTellers();
-				tellers.add(_user);
+				List<Teller> tellers = branch.getTellers();
+				tellers.add(teller);
 
 				branch.setBranchTellers(tellers);
 				branchRepository.save(branch);
 
-				return new ResponseEntity<>(_user, HttpStatus.CREATED);
+				return new ResponseEntity<>(teller, HttpStatus.CREATED);
 			}
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,8 +103,8 @@ public class AdminController {
 
 	@GetMapping("/tellers/{id}")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OFFICE')")
-	public ResponseEntity<List<User>> getAllBranchTellers(@PathVariable("id") String id) {
-		ResponseEntity<List<User>> result;
+	public ResponseEntity<List<Teller>> getAllBranchTellers(@PathVariable("id") String id) {
+		ResponseEntity<List<Teller>> result;
 		try {
 
 			Optional<Branch> branch = branchRepository.findById(id);
@@ -108,7 +112,8 @@ public class AdminController {
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
 			Branch branch1 = branch.get();
-			List<User> users = branch1.getBranchTellers();
+			List<Teller> users;
+			users = branch1.getTellers();
 
 
 			if (users.isEmpty()) {
@@ -126,6 +131,8 @@ public class AdminController {
 	
 	@PostMapping("/total-withdrawal")
 	public double totalWithdrawal() {
+
+
 		return 0.0;
 	}
 
