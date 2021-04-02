@@ -13,25 +13,25 @@ public class RegistorTellerRequest {
     @Size(max = 50)
     @Email
     private String email;
-    @NotBlank
+
     private String password;
 
     private String branchName;
-    @NotBlank
+
     private String  firstName;
-    @NotBlank
+
     private String lastName;
-    @NotBlank
+
     private int ssn;
-    @NotBlank
+
     private String street;
-    @NotBlank
+
     private String city;
-    @NotBlank
+
     private String postalCode;
-    @NotBlank
+
     private int zipCode;
-    @NotBlank
+
     private String country;
 
     public String getUsername() {
