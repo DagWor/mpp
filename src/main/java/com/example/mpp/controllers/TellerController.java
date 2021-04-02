@@ -213,7 +213,7 @@ public class TellerController {
     @PreAuthorize("hasRole('TELLER')")
     public ResponseEntity<AccountInfo> makeDeposit(@RequestBody DepositRequest transactionRequest){
         try {
-            Optional<AccountInfo> crAccount =accountRepository.findAccountInfoByAccountNumber(transactionRequest.getAccountNumber());
+            Optional<AccountInfo> crAccount = accountRepository.findAccountInfoByAccountNumber(transactionRequest.getAccountNumber());
             if (crAccount.isPresent()) {
                 AccountInfo accountInfo = crAccount.get();
                 Account account=null;
