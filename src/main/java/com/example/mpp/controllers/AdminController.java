@@ -86,7 +86,7 @@ public class AdminController {
 
                 User findUser=userRepository.findUserByUsername(auth.getName());
 
-				Branch branch = branchRepository.findBranchByAdmin_Email(findUser.getBranchName());
+				Branch branch = branchRepository.findBranchByBranchName(findUser.getBranchName());
 
 
 //				List<User> tellers = new ArrayList<>();

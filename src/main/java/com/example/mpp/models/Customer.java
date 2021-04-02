@@ -9,19 +9,14 @@ import java.util.List;
 @Document(collection = "customer")
 public class Customer  extends User{
 
-    @Id
-    private String id;
+
     private int customerId;
-    private Address address;
+
     private User user;
     private List<Account > account;
 
 
-    public Customer( Address address, User user) {
-       this.address = address;
-        this.user = user;
 
-    }
 
     public Customer(  User user) {
 
@@ -29,31 +24,24 @@ public class Customer  extends User{
 
     }
 
-    public Customer(String username, String email, String password, String id, Address address, User user) {
+    public Customer(String username, String email, String password,  User user) {
         super(username, email, password);
-        this.id = id;
-        this.address = address;
+
         this.user = user;
 
     }
 
-    @Override
-    public String getId() {
-        return id;
-    }
+//    @Override
+//    public String getId() {
+//        return id;
+//    }
+//
+//    @Override
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
 
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
 
     public User getUser() {
         return user;

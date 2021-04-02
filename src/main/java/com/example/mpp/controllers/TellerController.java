@@ -80,18 +80,35 @@ public class TellerController {
                                 ,accountInfo.getCurrentDate());
                         accountInfo1.setCurrentDate(LocalDate.now());
                         accountRepository.save(accountInfo1);
+                        List<Account> accountList=customer.getAccount();
+
+                       if(accountInfo.getType().equals("SAVING")){
+                            //super(accountNumber, balance,type, currentDate, customerId);
+                            SavingAccount account=new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
+                                    accountInfo.getBalance(),"SAVING",LocalDate.now(),customer);
+                            accountList.add(account);
+                            customer.setAccount(accountList);
+                            account.setCustomer(customer);
+
+                        } else {
+                            CheckingAccount account=new CheckingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
+                                    accountInfo.getBalance(),"CHECKING",LocalDate.now(),customer);
+                            accountList.add(account);
+                            customer.setAccount(accountList);
+                            account.setCustomer(customer);
+
+                        }
+
+                        accountRepository.save(accountInfo1);
+                       customerRepositor.save(customer);
+
                     }
-                    List<Account> accountList=customer.getAccount();
+
 
                 }
 
             }
-          if(customerUser.isPresent()){
-              User exitingCustomerUser=customerUser.get();
 
-
-
-          }
 
 
              else{
@@ -181,6 +198,16 @@ public class TellerController {
                 // update current account number
             currentAccountNumber.get().setCurrentAccountNumber(currentAccountNumber.get().getCurrentAccountNumber()+1);
             currentAccountNumberResource.save(currentAccountNumber.get());
+
+            // save new account
+
+          //  Optional<CurrentAccountNumber> currentAccountNumbers=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
+            int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
+            AccountInfo accountInfo1=new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
+                    customerSignupRequest.getAccountTYpe()
+                    ,LocalDate.now());
+            accountInfo1.setCurrentDate(LocalDate.now());
+            accountRepository.save(accountInfo1);
             return new ResponseEntity<>(customer,HttpStatus.OK);
             } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -190,6 +217,7 @@ public class TellerController {
 
 
 
+/*
 
 
 
@@ -298,6 +326,7 @@ public class TellerController {
         }
         return result;
     }
+*/
 
     /*@GetMapping("/customers")
     @PreAuthorize("hasRole('TELLER')")
@@ -319,7 +348,7 @@ public class TellerController {
         }
     }*/
 
-    @GetMapping("/users/{id}")
+  /*  @GetMapping("/users/{id}")
     public ResponseEntity<User> getCustomerById(@PathVariable("id") String id) {
         Optional<User> userData = userRepository.findById(id);
 
@@ -342,7 +371,8 @@ public class TellerController {
         }
     }
 
-
+*/
+   /*
 
     @PostMapping("/deposit")
     @PreAuthorize("hasRole('TELLER')")
@@ -426,7 +456,7 @@ public class TellerController {
 
 
     }
-
+*/
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('TELLER')")
     public double totalDeposit(){
