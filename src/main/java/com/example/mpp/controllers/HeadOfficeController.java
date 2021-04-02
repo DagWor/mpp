@@ -51,6 +51,16 @@ public class HeadOfficeController {
 
     MongoTemplate mongoTemplate;
 
+
+//    @PreAuthorize("hasRole('HEAD_OFFICE')")
+//    @PostMapping("/create-admin")
+//    public ResponseEntity<?> branchCreate(@Valid @RequestBody SignupRequest signUpRequest) {
+//      Branch branch=new Branch();
+//
+//    }
+
+
+
     @PreAuthorize("hasRole('HEAD_OFFICE')")
     @PostMapping("/create-admin")
     public ResponseEntity<?> registerTeller(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -97,11 +107,6 @@ public class HeadOfficeController {
     }
 
 
-    @GetMapping("/total-withdrawal")
-    public double totalWithdrawal() {
-
-        return 0.0;
-    }
 
 
 
