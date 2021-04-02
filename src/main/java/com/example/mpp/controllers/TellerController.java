@@ -71,21 +71,26 @@ public class TellerController {
 
           Optional<User> customerUser=userRepository.findByUsername(accountInfo.getUsername());
             if(customerUser.isPresent()){
-                if(customerRepositor.ex)
+                if(customerRepositor.existsCustomerByUser(customerUser.get())){
+                    Customer customer=customerRepositor.findCustomerByUser(customerUser.get());
+                    Optional<CurrentAccountNumber> currentAccountNumber=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
+                    int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
+                    if(!accountRepository.existsAccountInfoByAccountNumber(accountNumber)){
+                        AccountInfo accountInfo1=new AccountInfo(accountNumber, accountInfo.getBalance(),accountInfo.getType()
+                                ,accountInfo.getCurrentDate());
+                        accountInfo1.setCurrentDate(LocalDate.now());
+                        accountRepository.save(accountInfo1);
+                    }
+                    List<Account> accountList=customer.getAccount();
+
+                }
 
             }
           if(customerUser.isPresent()){
               User exitingCustomerUser=customerUser.get();
 
 
-              Optional<CurrentAccountNumber> currentAccountNumber=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
-              int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
-              if(!accountRepository.existsAccountInfoByAccountNumber(accountNumber)){
-                  AccountInfo accountInfo1=new AccountInfo(accountNumber, accountInfo.getBalance(),accountInfo.getType()
-                          ,accountInfo.getCurrentDate());
-                  accountInfo1.setCurrentDate(LocalDate.now());
-                  accountRepository.save(accountInfo1);
-              }
+
           }
 
 
