@@ -11,6 +11,10 @@ import java.util.List;
 public class Branch {
     @Id
     private String id;
+//    private String branchName;
+//    private Address address;
+//    private User user;
+
 
     private int depositAmount = 98987;
     private String branchName;

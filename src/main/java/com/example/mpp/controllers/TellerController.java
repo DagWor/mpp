@@ -9,6 +9,7 @@ import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.request.WithdrawalRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.*;
+import com.example.mpp.resources.UserWithID;
 import com.example.mpp.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,6 +57,8 @@ public class TellerController {
 
     @Autowired
     DepositRepository depositRepository;
+    @Autowired
+    private UserWithIDRepository userWithIDRepository;
 
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-account")
@@ -81,7 +84,7 @@ public class TellerController {
     }
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-customer")
-    public ResponseEntity<?> registerCustomer(@Valid @RequestBody SignupRequest signUpRequest,@RequestBody AccountInfo accountInfo) {
+    public ResponseEntity<?> registerCustomer(@Valid @RequestBody SignupRequest signUpRequest) {
 
 
 
@@ -118,14 +121,15 @@ public class TellerController {
                 _user.setRoles(roles);
 
                 userRepository.save(_user);
+
                 ///  create account
-
-
-
-                if(!accountRepository.existsAccountInfoByAccountNumber(accountInfo.getAccountNumber())){
-                    accountInfo.setAccountNumber(1000);
-                    accountRepository.save(accountInfo);
-                }
+                UserWithID userWithID=new UserWithID(_user.getId(), _user.getUsername());
+                userWithIDRepository.save(userWithID);
+//
+//                if(!accountRepository.existsAccountInfoByAccountNumber(accountInfo.getAccountNumber())){
+//                    accountInfo.setAccountNumber(1000);
+//                    accountRepository.save(accountInfo);
+//                }
 
                 List<User> customers = branch.getCustomers();
                 customers.add(_user);
