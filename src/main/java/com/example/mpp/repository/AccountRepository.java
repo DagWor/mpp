@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface AccountRepository extends MongoRepository<AccountInfo,Integer> {
     Optional<AccountInfo> findAccountInfoByAccountNumber(int account);
     boolean existsAccountInfoByAccountNumber(int accountNumber);
+    AccountInfo findAccountInfoByCustomerId(int customerId);
 }
