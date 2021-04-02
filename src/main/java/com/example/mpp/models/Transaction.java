@@ -17,6 +17,8 @@ public class Transaction {
     private int toAccount;
     private int fromAccount;
     private int branchId;
+    private Customer customer;
+
 
     private AccountInfo accountInfo;
 
@@ -85,5 +87,21 @@ public class Transaction {
 
     public void setBranchId(int branchId) {
         this.branchId = branchId;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public AccountInfo getAccountInfo() {
+        return accountInfo;
+    }
+
+    public void setAccountInfo(AccountInfo accountInfo) {
+        this.accountInfo = accountInfo;
     }
 }
