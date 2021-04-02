@@ -15,4 +15,5 @@ import com.example.mpp.models.User;
 public interface BranchRepository extends MongoRepository<Branch, String> {
     Branch findBranchByAdmin_Email(String email);
     Branch findBranchByTellersContains(User user);
+
 }
