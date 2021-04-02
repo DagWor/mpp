@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.List;
 
 @Document(collection = "Account")
 public class AccountInfo {
@@ -19,16 +20,17 @@ public class AccountInfo {
 
     private double balance;
 
+    private List<Transaction> transactions;
+
     private String type;
         private LocalDate currentDate;
 
     public AccountInfo( int accountNumber, double balance,String type ,LocalDate currentDate,int customerId) {
-
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.type = type;
         this.currentDate = currentDate;
-        this.customerId=customerId;
+        this.customerId = customerId;
     }
     public int getCustomerId() {
         return customerId;
@@ -73,5 +75,13 @@ public class AccountInfo {
 
     public void setCurrentDate(LocalDate currentDate) {
         this.currentDate = currentDate;
+    }
+
+    public List<Transaction> getTransactionList() {
+        return transactions;
+    }
+
+    public void setTransactionList(List<Transaction> transactionList) {
+        this.transactions = transactionList;
     }
 }
