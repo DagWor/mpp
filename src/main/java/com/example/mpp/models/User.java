@@ -26,6 +26,23 @@ public class User {
   @Email
   private String email;
 
+  private String branchName;
+
+
+
+  private Address address;
+
+
+
+
+  public float getBalance() {
+    return balance;
+  }
+
+  public void setBalance(float balance) {
+    this.balance = balance;
+  }
+
   @NotBlank
   @Size(max = 120)
   private String password;
@@ -34,10 +51,18 @@ public class User {
 
   private Set<Role> roles = new HashSet<>();
 
-  private List<Branch> branches = new ArrayList<>();
+  public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email,
+              @NotBlank @Size(max = 120) String password,  Set<Role> roles) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.roles = roles;
+  }
 
   public User() {
   }
+
+
 
   public User(String username, String email, String password) {
     this.username = username;
@@ -46,6 +71,21 @@ public class User {
     this.balance = 0.0f;
   }
 
+  public Address getAddress() {
+    return address;
+  }
+
+  public void setAddress(Address address) {
+    this.address = address;
+  }
+
+  public String getBranchName() {
+    return branchName;
+  }
+
+  public void setBranchName(String branchName) {
+    this.branchName = branchName;
+  }
   public String getId() {
     return id;
   }
@@ -85,12 +125,12 @@ public class User {
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
-
-  public List<Branch> getBranches() {
-    return branches;
-  }
-
-  public void setBranches(List<Branch> branch) {
-    this.branches = branch;
-  }
+//
+//  public List<Branch> getBranches() {
+//    return branches;
+//  }
+//
+//  public void setBranches(List<Branch> branch) {
+//    this.branches = branch;
+//  }
 }

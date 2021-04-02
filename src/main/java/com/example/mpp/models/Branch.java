@@ -11,21 +11,22 @@ import java.util.List;
 public class Branch {
     @Id
     private String id;
-//    private String branchName;
-//    private Address address;
-//    private User user;
-
-
-    private int depositAmount = 98987;
     private String branchName;
-    private int branchId;
-    private List<Customer> customers = new ArrayList<>();
-    private List<Teller> tellers = new ArrayList<>();
+    private Address address;
+    private List<User> user;
 
-    private User admin;
+    public Branch(String branchName, Address address, List<User> user) {
+        this.branchName = branchName;
+        this.address = address;
+        this.user = user;
+    }
 
-    public Branch(User admin){
-        this.admin = admin;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getBranchName() {
@@ -36,69 +37,109 @@ public class Branch {
         this.branchName = branchName;
     }
 
-    public int getBranchId() {
-        return branchId;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setBranchId(int branchId) {
-        this.branchId = branchId;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
-    public void addCustomerToBranch(Customer user){
-        customers.add(user);
+    public List<User> getUser() {
+        return user;
     }
 
-
-    public void addTellerToBranch(Teller user){
-        tellers.add(user);
+    public void setUser(List<User> user) {
+        this.user = user;
     }
 
-    public List<Customer> getBranchCustomers(){
-        return customers;
-    }
-
-    public void setBranchTellers(List<Teller> tellers){
-        this.tellers = tellers;
-    }
-
-    public int getDepositAmount() {
-        return depositAmount;
-    }
-
-    public void setDepositAmount(int depositAmount) {
-        this.depositAmount = depositAmount;
-    }
-
-    public List<Customer> getCustomers() {
-        return customers;
-    }
-
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
-    }
-
-    public List<Teller> getTellers() {
-        return tellers;
-    }
-
-    public User getAdmin() {
-        return admin;
-    }
-
-
-    public User getBranchAdmin(){
-        return admin;
-    }
-
-    public void setAdmin(User user){
-        this.admin = user;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public int getDepositAmuont() {
-        return depositAmount;
-    }
+    //    private int depositAmount = 98987;
+//    private String branchName;
+//
+//    public String getBranchName() {
+//        return branchName;
+//    }
+//
+//    public void setBranchName(String branchName) {
+//        this.branchName = branchName;
+//    }
+//
+//    public int getBranchId() {
+//        return branchId;
+//    }
+//
+//    public void setBranchId(int branchId) {
+//        this.branchId = branchId;
+//    }
+//
+//    private int branchId;
+//    private List<User> customers = new ArrayList<>();
+//    private List<User> tellers = new ArrayList<>();
+//
+//    private User admin;
+//
+//    public Branch(User admin){
+//        this.admin = admin;
+//        tellers.add(admin);
+//        customers.add(admin);
+//    }
+//    public void addCustomerToBranch(User user){
+//        customers.add(user);
+//    }
+//
+//
+//    public void addTellerToBranch(User user){
+//        tellers.add(user);
+//    }
+//
+//    public List<User> getBranchCustomers(){
+//        return customers;
+//    }
+//
+//    public void setBranchTellers(List<User> tellers){
+//        this.tellers = tellers;
+//    }
+//
+//    public int getDepositAmount() {
+//        return depositAmount;
+//    }
+//
+//    public void setDepositAmount(int depositAmount) {
+//        this.depositAmount = depositAmount;
+//    }
+//
+//    public List<User> getCustomers() {
+//        return customers;
+//    }
+//
+//    public void setCustomers(List<User> customers) {
+//        this.customers = customers;
+//    }
+//
+//    public List<User> getTellers() {
+//        return tellers;
+//    }
+//
+//    public User getAdmin() {
+//        return admin;
+//    }
+//
+//    public List<User> getBranchTellers(){
+//        return tellers;
+//    }
+//    public User getBranchAdmin(){
+//        return admin;
+//    }
+//
+//    public void setAdmin(User user){
+//        this.admin = user;
+//    }
+//
+//    public String getId() {
+//        return id;
+//    }
+//
+//    public int getDepositAmuont() {
+//        return depositAmount;
+//    }
 }

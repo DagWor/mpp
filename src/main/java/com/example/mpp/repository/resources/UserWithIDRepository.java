@@ -1,4 +1,4 @@
-package com.example.mpp.repository;
+package com.example.mpp.repository.resources;
 
 import com.example.mpp.resources.UserWithID;
 import org.springframework.data.mongodb.repository.MongoRepository;

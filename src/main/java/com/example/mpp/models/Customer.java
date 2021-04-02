@@ -1,53 +1,81 @@
 package com.example.mpp.models;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
-public class Customer extends User {
+@Document(collection = "customer")
+public class Customer  extends User{
 
     @Id
     private String id;
-    private String firstName;
-    private String lastName;
-    private Branch branch;
+    private int customerId;
+    private Address address;
+    private User user;
+    private List<Account > account;
 
-    public Branch getBranch() {
-        return branch;
+
+    public Customer( Address address, User user) {
+       this.address = address;
+        this.user = user;
+
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public Customer(  User user) {
+
+        this.user = user;
+
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public Customer(String username, String email, String password, String id, Address address, User user) {
+        super(username, email, password);
+        this.id = id;
+        this.address = address;
+        this.user = user;
+
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
+    @Override
     public String getId() {
         return id;
     }
 
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getLastName() {
-        return lastName;
+    public Address getAddress() {
+        return address;
     }
 
-    public Customer(String username,String email,String password,String firstName,String lastName)
-    {
-        super(username,email,password);
-        this.firstName=firstName;
-        this.lastName=lastName;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
+    public User getUser() {
+        return user;
+    }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Account> getAccount() {
+        return account;
+    }
+
+    public void setAccount(List<Account> account) {
+        this.account = account;
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
 }

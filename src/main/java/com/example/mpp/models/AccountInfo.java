@@ -21,14 +21,32 @@ public class AccountInfo {
 
     private String type;
     private LocalDate currentDate;
+    private Customer customer;
 
-    public AccountInfo( int accountNumber, double balance,String type ,LocalDate currentDate,int customerId) {
+
+
+    public AccountInfo(int accountNumber, double balance, String type , LocalDate currentDate,Customer customer) {
 
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.type = type;
         this.currentDate = currentDate;
-        this.customerId=customerId;
+        this.customer=customer;
+    }
+    public AccountInfo(int accountNumber, double balance, String type , LocalDate currentDate) {
+
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.type = type;
+        this.currentDate = currentDate;
+
+    }
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
     public int getCustomerId() {
         return customerId;
