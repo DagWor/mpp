@@ -17,10 +17,13 @@ public class Transaction {
     private int toAccount;
     private int fromAccount;
     private int branchId;
-  private TransactionType type;
-  public Transaction(){
 
-  }
+    private AccountInfo accountInfo;
+
+      private TransactionType type;
+      public Transaction(){
+
+      }
 
     public Transaction( LocalDate transactionDate, double amount, int toAccount, int fromAccount, int branchId,TransactionType type) {
 
