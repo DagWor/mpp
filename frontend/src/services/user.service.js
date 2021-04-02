@@ -1,9 +1,12 @@
 import axios from 'axios';
 import authHeader from './auth-header';
+import paramController from "./paramController";
 
 const API_URL = 'http://localhost:8080/api/test/';
+const CUSTOMER_API_URL = 'http://localhost:8080/api/customer/';
 
 class UserService {
+
     getPublicContent() {
         return axios.get(API_URL + 'all');
     }
@@ -19,6 +22,14 @@ class UserService {
     getAdminBoard() {
         return axios.get(API_URL + 'admin', { headers: authHeader() });
     }
+
+    getCustomerAccounts() {
+        return axios.get(CUSTOMER_API_URL + 'accounts', { headers: authHeader() });
+    }
+
+    // getCustomerTransactions = (accountNumber) => {
+    //     return axios.get(CUSTOMER_API_URL + `account/${accountNumber}`, { headers: authHeader() });
+    // }
 }
 
 export default new UserService();
