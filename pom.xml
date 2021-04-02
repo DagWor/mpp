@@ -59,14 +59,15 @@
 			<version>0.9.1</version>
 		</dependency>
 		<dependency>
-			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>2.13.0</version>
+			<version>2.21.0</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -86,7 +87,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-<<<<<<< HEAD
+
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-jasper</artifactId>
 <scope>provided</scope>
@@ -97,14 +98,7 @@
 		</dependency>
 
 
-		<!-- Web -->
-		<!--      <dependency>
-                  <groupId>org.springframework.boot</groupId>
-                  <artifactId>spring-boot-starter-web</artifactId>
-              </dependency>-->
-
-		<!--		 https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
-=======
+		<dependency>
     <groupId>org.apache.tomcat.embed</groupId>
     <artifactId>tomcat-embed-jasper</artifactId>
     <scope>provided</scope>
@@ -137,7 +131,6 @@
         </dependency>-->
 
 <!--		 https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
->>>>>>> c7b6918b72f0d6cd6204dbdf5ca2d26f42a83ac5
 		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
 		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
 		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
@@ -149,12 +142,6 @@
 			<version>9.0.30</version>
 		</dependency>
 
-		<!--	<dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-            </dependency>-->
-
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
 
 
 

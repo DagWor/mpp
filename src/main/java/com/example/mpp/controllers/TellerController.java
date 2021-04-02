@@ -255,6 +255,7 @@ public class TellerController {
     @PostMapping("/withdraw")
     @PreAuthorize("hasRole('TELLER')")
     public void makeWithdrawal(@RequestBody WithdrawalRequest transaction){
+
         if(accountRepository.existsAccountInfoByAccountNumber(transaction.getAccountNumber())){
 
             Optional<AccountInfo> account= accountRepository.findAccountInfoByAccountNumber(transaction.getAccountNumber());
