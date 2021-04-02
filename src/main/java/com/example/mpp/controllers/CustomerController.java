@@ -1,15 +1,18 @@
 package com.example.mpp.controllers;
 
-import com.example.mpp.models.Account;
-import com.example.mpp.models.AccountInfo;
-import com.example.mpp.models.Transaction;
-import com.example.mpp.models.User;
+import com.example.mpp.models.*;
+import com.example.mpp.payload.request.TransferRequest;
 import com.example.mpp.repository.AccountRepository;
+import com.example.mpp.repository.CustomerRepository;
 import com.example.mpp.repository.TransactionRepository;
+import com.example.mpp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -21,24 +24,31 @@ import java.util.Optional;
 @RequestMapping("/api/customer")
 public class CustomerController {
 
-
     @Autowired
     private TransactionRepository transactionRepository;
 
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public void transfer(@RequestBody Transaction transaction){
-       // transactionRepository.save(transaction);
+    public void transfer(@RequestBody TransferRequest transferRequest){
+        Transaction transaction = new Transaction();
 
-    }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findUserByUsername(auth.getName());
+        Customer customer = customerRepository.findCustomerByUser(user);
 
-    @GetMapping("/balance")
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public void makeWithdrawal(double amount){
-
+        transaction.setCustomer(customer);
+        transaction.setAmount(transferRequest.getAmount());
+        transaction.setFromAccount(transferRequest.getFromAccount());
+        transaction.setToAccount(transferRequest.getToAccount());
     }
 
     @GetMapping("/accounts")
