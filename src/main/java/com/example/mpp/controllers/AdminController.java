@@ -1,9 +1,7 @@
 package com.example.mpp.controllers;
 
-import com.example.mpp.models.Branch;
-import com.example.mpp.models.ERole;
-import com.example.mpp.models.Role;
-import com.example.mpp.models.User;
+import com.example.mpp.models.*;
+import com.example.mpp.payload.request.RegistorTellerRequest;
 import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.BranchRepository;
@@ -53,7 +51,7 @@ public class AdminController {
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/create-teller")
-	public ResponseEntity<?> registerTeller(@Valid @RequestBody SignupRequest signUpRequest) {
+	public ResponseEntity<?> registerTeller(@Valid @RequestBody RegistorTellerRequest signUpRequest) {
 		try {
 			if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 				return ResponseEntity
@@ -72,24 +70,40 @@ public class AdminController {
 						.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 				roles.add(userRole);
 
-				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+				// Teller address
+				Address address = new Address(signUpRequest.getStreet(), signUpRequest.getCity(),
+						signUpRequest.getPostalCode(), signUpRequest.getZipCode(), signUpRequest.getCountry());
+
+
 
 				User _user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
 						encoder.encode(signUpRequest.getPassword()));
-				User x = userRepository.findUserByUsername(auth.getName());
 
+
+
+               // find current user
+				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+                User findUser=userRepository.findUserByUsername(auth.getName());
+
+				Branch branch = branchRepository.findBranchByBranchName(findUser.getBranchName());
+
+
+//				List<User> tellers = new ArrayList<>();
+//				tellers = branch.getBranchTellers();
+//				tellers.add(_user);
+//
+//				branch.setBranchTellers(tellers);
+
+
+				_user.setBranchName(findUser.getBranchName());
+				_user.setAddress(address);
 				_user.setRoles(roles);
 				userRepository.save(_user);
-
-
-				Branch branch = branchRepository.findBranchByAdmin_Email(x.getEmail());
-				List<User> tellers = new ArrayList<>();
-				tellers = branch.getBranchTellers();
-				tellers.add(_user);
-
-				branch.setBranchTellers(tellers);
+				List<User> userList=branch.getUser();
+				userList.add(_user);
+				branch.setUser(userList);
 				branchRepository.save(branch);
-
 				return new ResponseEntity<>(_user, HttpStatus.CREATED);
 			}
 		} catch (Exception e) {
@@ -97,7 +111,7 @@ public class AdminController {
 		}
 	}
 
-	@GetMapping("/tellers/{id}")
+/*	@GetMapping("/tellers/{id}")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OFFICE')")
 	public ResponseEntity<List<User>> getAllBranchTellers(@PathVariable("id") String id) {
 		ResponseEntity<List<User>> result;
@@ -121,7 +135,7 @@ public class AdminController {
 			result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return result;
-	}
+	}*/
 
 	
 	@PostMapping("/total-withdrawal")

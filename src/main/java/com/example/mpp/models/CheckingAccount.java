@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-
+@Document(collection = "Account")
 public class CheckingAccount extends AccountInfo implements Account{
 
     private double interestRate = 0.05;

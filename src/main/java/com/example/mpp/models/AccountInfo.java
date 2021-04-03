@@ -20,17 +20,46 @@ public class AccountInfo {
 
     private double balance;
 
-    private List<Transaction> transactions;
-
     private String type;
-        private LocalDate currentDate;
+    private LocalDate currentDate;
+    private Customer customer;
+    private List<Transaction> transaction;
 
-    public AccountInfo( int accountNumber, double balance,String type ,LocalDate currentDate,int customerId) {
+    public AccountInfo(){
+
+    }
+
+    public AccountInfo(int accountNumber, double balance, String type , LocalDate currentDate,Customer customer) {
+
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.type = type;
         this.currentDate = currentDate;
-        this.customerId = customerId;
+        this.customer=customer;
+    }
+    public AccountInfo(int accountNumber, double balance, String type , LocalDate currentDate) {
+
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.type = type;
+
+
+    }
+    public List<Transaction> getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(List<Transaction> transaction) {
+        this.transaction = transaction;
+    }
+
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
     public int getCustomerId() {
         return customerId;
@@ -75,13 +104,5 @@ public class AccountInfo {
 
     public void setCurrentDate(LocalDate currentDate) {
         this.currentDate = currentDate;
-    }
-
-    public List<Transaction> getTransactionList() {
-        return transactions;
-    }
-
-    public void setTransactionList(List<Transaction> transactionList) {
-        this.transactions = transactionList;
     }
 }
