@@ -13,6 +13,7 @@ import BoardUser from "./components/user/board-user.component";
 import BoardTeller from "./components/teller/board-teller.component";
 import BoardAdmin from "./components/admin/board-admin.component";
 import Accounts from "./components/user/accounts";
+import Transactions from "./components/user/transaction.component";
 
 class App extends Component {
   constructor(props) {
@@ -92,6 +93,14 @@ class App extends Component {
                     </Link>
                   </li>
               )}
+
+              {currentUser && (
+                  <li className="nav-item">
+                    <Link to={"/customer/transactions"} className="nav-link">
+                      Transactions
+                    </Link>
+                  </li>
+              )}
             </div>
 
             {currentUser ? (
@@ -134,6 +143,7 @@ class App extends Component {
               <Route path="/mod" component={BoardTeller} />
               <Route path="/admin" component={BoardAdmin} />
               <Route path="/customer/accounts" component={Accounts} />
+              <Route path="/customer/transactions`" component={Transactions} />
             </Switch>
           </div>
         </div>

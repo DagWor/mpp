@@ -27,9 +27,9 @@ class UserService {
         return axios.get(CUSTOMER_API_URL + 'accounts', { headers: authHeader() });
     }
 
-    // getCustomerTransactions = (accountNumber) => {
-    //     return axios.get(CUSTOMER_API_URL + `account/${accountNumber}`, { headers: authHeader() });
-    // }
+    getCustomerTransactions = () => {
+        return axios.get(CUSTOMER_API_URL + `transactions`, { headers: authHeader() });
+    }
 }
 
 export default new UserService();
