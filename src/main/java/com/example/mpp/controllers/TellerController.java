@@ -507,9 +507,9 @@ public class TellerController {
         return 0.0;
     }
 
-    @PostMapping("/activate-customer")
-    @PreAuthorize("hasRole('TELLER')")
-    public void createCustomer(){
-
+    @GetMapping("/customerss")
+    public ResponseEntity<List<Customer>> customer(){
+        List<Customer> customers = customerRepositor.findAll();
+        return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 }

@@ -25,7 +25,9 @@ public class AccountInfo {
     private Customer customer;
     private List<Transaction> transaction;
 
+    public AccountInfo(){
 
+    }
 
     public AccountInfo(int accountNumber, double balance, String type , LocalDate currentDate,Customer customer) {
 
@@ -40,7 +42,7 @@ public class AccountInfo {
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.type = type;
-        this.currentDate = currentDate;
+
 
     }
     public List<Transaction> getTransaction() {
