@@ -53,6 +53,7 @@ public class Branch {
         this.user = user;
     }
 
+
     //    private int depositAmount = 98987;
 //    private String branchName;
 //
