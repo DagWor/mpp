@@ -175,17 +175,10 @@ public class TellerController {
                             findById("6067db4b7805514fd5a5f196");
 
                 customerRepositor.save(customer);
-                int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
-
                 //currentAccountNumber.get().getCurrentAccountNumber()
                 if(customerSignupRequest.getAccountTYpe().equals("SAVING")){
                     //super(accountNumber, balance,type, currentDate, customerId);
-                    AccountInfo accountInfo1=new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
-                            customerSignupRequest.getAccountTYpe()
-                            ,LocalDate.now());
-                    accountInfo1.setCurrentDate(LocalDate.now());
-                    accountInfo1.setCustomer(customer);
-                    accountRepository.save(accountInfo1);
+
                     SavingAccount account=new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
                             customerSignupRequest.getIntialAmount(),"SAVING",LocalDate.now(),customer);
                     accountRepository.save(account);
@@ -225,7 +218,12 @@ public class TellerController {
                 // save new account
 
                 //  Optional<CurrentAccountNumber> currentAccountNumbers=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
-
+                int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
+                AccountInfo accountInfo1=new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
+                        customerSignupRequest.getAccountTYpe()
+                        ,LocalDate.now());
+                accountInfo1.setCurrentDate(LocalDate.now());
+                accountRepository.save(accountInfo1);
                 //customerRepositor.save(customer);
                 return new ResponseEntity<>(customer,HttpStatus.OK);
 
