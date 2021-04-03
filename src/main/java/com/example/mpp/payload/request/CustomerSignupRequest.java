@@ -23,30 +23,32 @@ public class CustomerSignupRequest {
 
 
     //    private Set<String> roles;
-     @NotBlank
+
     private String  firstName;
-    @NotBlank
+
     private String lastName;
-    @NotBlank
+
     private int ssn;
-    @NotBlank
+
     private String street;
-    @NotBlank
+
     private String city;
-    @NotBlank
+
     private String postalCode;
-    @NotBlank
+
     private int zipCode;
-    @NotBlank
+
     private String country;
 
-    @NotBlank
+
     private double intialAmount;
 
-
-
-
     private String accountTYpe;
+
+
+
+
+
 
     public String getAccountTYpe() {
         return accountTYpe;

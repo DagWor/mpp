@@ -7,9 +7,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Document(collection = "customer")
-public class Customer  extends User{
+public class Customer {
 
-
+    @Id
+    private String id;
     private int customerId;
 
     private User user;
@@ -24,24 +25,9 @@ public class Customer  extends User{
 
     }
 
-    public Customer(String username, String email, String password,  User user) {
-        super(username, email, password);
-
-        this.user = user;
-
+    public String getId() {
+        return id;
     }
-
-//    @Override
-//    public String getId() {
-//        return id;
-//    }
-//
-//    @Override
-//    public void setId(String id) {
-//        this.id = id;
-//    }
-
-
 
     public User getUser() {
         return user;

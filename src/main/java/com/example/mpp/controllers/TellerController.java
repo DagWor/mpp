@@ -143,16 +143,13 @@ public class TellerController {
                         .body(new MessageResponse("Email already taken"));
             }
             else {
+                // find list of roles
+                Set<Role> roles = new HashSet<>();
 
+                Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
-            }
-               // find list of roles
-            Set<Role> roles = new HashSet<>();
-
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-
-            roles.add(userRole);
+                roles.add(userRole);
 
 
                 //Address(String street, String city, String postalCode, int zipCode, String country) {
@@ -162,55 +159,80 @@ public class TellerController {
                         customerSignupRequest.getPostalCode(),customerSignupRequest.getZipCode(),customerSignupRequest.getCountry() );
                 //
                 // create customer account number currentAccountNumberResource
-               // Customer( Address address, User user)
+                // Customer( Address address, User user)
                 User user=new User(customerSignupRequest.getUsername(),customerSignupRequest.getEmail()
                         ,encoder.encode(customerSignupRequest.getPassword()),roles);
+
+            userRepository.save(user);
                 Customer customer=new Customer(user);
                 List<Account> accountList=new ArrayList<>();
 
-            Optional<CurrentAccountNumber> currentAccountNumber=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
 
+                    //CurrentAccountNumber currentAccountNumber1=new CurrentAccountNumber(10000);
+               // currentAccountNumberResource.save(currentAccountNumber1);
+
+                    Optional<CurrentAccountNumber> currentAccountNumber=currentAccountNumberResource.
+                            findById("6067db4b7805514fd5a5f196");
+
+                customerRepositor.save(customer);
+                int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
+
+                //currentAccountNumber.get().getCurrentAccountNumber()
                 if(customerSignupRequest.getAccountTYpe().equals("SAVING")){
                     //super(accountNumber, balance,type, currentDate, customerId);
+                    AccountInfo accountInfo1=new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
+                            customerSignupRequest.getAccountTYpe()
+                            ,LocalDate.now());
+                    accountInfo1.setCurrentDate(LocalDate.now());
+                    accountInfo1.setCustomer(customer);
+                    accountRepository.save(accountInfo1);
                     SavingAccount account=new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
                             customerSignupRequest.getIntialAmount(),"SAVING",LocalDate.now(),customer);
+                    accountRepository.save(account);
                     accountList.add(account);
                     customer.setAccount(accountList);
                     account.setCustomer(customer);
 
                 } else {
+
                     CheckingAccount account=new CheckingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
                             customerSignupRequest.getIntialAmount(),"CHECKING",LocalDate.now(),customer);
+                    accountRepository.save(account);
                     accountList.add(account);
                     customer.setAccount(accountList);
                     account.setCustomer(customer);
 
                 }
-               //   set branch for customer
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                //   set branch for customer
 
-            User currentUser=userRepository.findUserByUsername(auth.getName());
-             user.setBranchName(currentUser.getBranchName());
-             user.setAddress(address);
-             userRepository.save(user);
-             customerRepositor.save(customer);
+
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+                User currentUser=userRepository.findUserByUsername(auth.getName());
+                user.setBranchName(currentUser.getBranchName());
+                user.setAddress(address);
+
+
+                userRepository.save(user);
+                customer.setUser(user);
+                customerRepositor.save(customer);
+               //
 
                 // update current account number
-            currentAccountNumber.get().setCurrentAccountNumber(currentAccountNumber.get().getCurrentAccountNumber()+1);
-            currentAccountNumberResource.save(currentAccountNumber.get());
+                currentAccountNumber.get().setCurrentAccountNumber(currentAccountNumber.get().getCurrentAccountNumber()+1);
+                currentAccountNumberResource.save(currentAccountNumber.get());
 
-            // save new account
+                // save new account
 
-          //  Optional<CurrentAccountNumber> currentAccountNumbers=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
-            int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
-            AccountInfo accountInfo1=new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
-                    customerSignupRequest.getAccountTYpe()
-                    ,LocalDate.now());
-            accountInfo1.setCurrentDate(LocalDate.now());
-            accountRepository.save(accountInfo1);
-            return new ResponseEntity<>(customer,HttpStatus.OK);
+                //  Optional<CurrentAccountNumber> currentAccountNumbers=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
+
+                //customerRepositor.save(customer);
+                return new ResponseEntity<>(customer,HttpStatus.OK);
+
+            }
+
             } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
