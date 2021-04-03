@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.List;
 
 @Document(collection = "Account")
 public class AccountInfo {
@@ -22,6 +23,7 @@ public class AccountInfo {
     private String type;
     private LocalDate currentDate;
     private Customer customer;
+    private List<Transaction> transaction;
 
 
 
@@ -41,6 +43,15 @@ public class AccountInfo {
         this.currentDate = currentDate;
 
     }
+    public List<Transaction> getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(List<Transaction> transaction) {
+        this.transaction = transaction;
+    }
+
+
     public Customer getCustomer() {
         return customer;
     }

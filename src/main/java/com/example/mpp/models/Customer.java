@@ -14,7 +14,7 @@ public class Customer {
     private int customerId;
 
     private User user;
-    private List<Account > account;
+    private List<AccountInfo > account;
 
 
 
@@ -37,11 +37,11 @@ public class Customer {
         this.user = user;
     }
 
-    public List<Account> getAccount() {
+    public List<AccountInfo> getAccount() {
         return account;
     }
 
-    public void setAccount(List<Account> account) {
+    public void setAccount(List<AccountInfo> account) {
         this.account = account;
     }
 

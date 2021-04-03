@@ -80,7 +80,7 @@ public class TellerController {
                                 ,accountInfo.getCurrentDate());
                         accountInfo1.setCurrentDate(LocalDate.now());
                         accountRepository.save(accountInfo1);
-                        List<Account> accountList=customer.getAccount();
+                        List<AccountInfo> accountList=customer.getAccount();
 
                        if(accountInfo.getType().equals("SAVING")){
                             //super(accountNumber, balance,type, currentDate, customerId);
@@ -162,43 +162,6 @@ public class TellerController {
                 // Customer( Address address, User user)
                 User user=new User(customerSignupRequest.getUsername(),customerSignupRequest.getEmail()
                         ,encoder.encode(customerSignupRequest.getPassword()),roles);
-
-            userRepository.save(user);
-                Customer customer=new Customer(user);
-                List<Account> accountList=new ArrayList<>();
-
-
-                    //CurrentAccountNumber currentAccountNumber1=new CurrentAccountNumber(10000);
-               // currentAccountNumberResource.save(currentAccountNumber1);
-
-                    Optional<CurrentAccountNumber> currentAccountNumber=currentAccountNumberResource.
-                            findById("6067db4b7805514fd5a5f196");
-
-                customerRepositor.save(customer);
-                //currentAccountNumber.get().getCurrentAccountNumber()
-                if(customerSignupRequest.getAccountTYpe().equals("SAVING")){
-                    //super(accountNumber, balance,type, currentDate, customerId);
-
-                    SavingAccount account=new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
-                            customerSignupRequest.getIntialAmount(),"SAVING",LocalDate.now(),customer);
-                    accountRepository.save(account);
-                    accountList.add(account);
-                    customer.setAccount(accountList);
-                    account.setCustomer(customer);
-
-                } else {
-
-                    CheckingAccount account=new CheckingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
-                            customerSignupRequest.getIntialAmount(),"CHECKING",LocalDate.now(),customer);
-                    accountRepository.save(account);
-                    accountList.add(account);
-                    customer.setAccount(accountList);
-                    account.setCustomer(customer);
-
-                }
-                //   set branch for customer
-
-
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
                 User currentUser=userRepository.findUserByUsername(auth.getName());
@@ -207,8 +170,58 @@ public class TellerController {
 
 
                 userRepository.save(user);
-                customer.setUser(user);
+
+
+                Customer customer=new Customer(user);
+                List<AccountInfo> accountList=new ArrayList<>();
+
+
+                    //CurrentAccountNumber currentAccountNumber1=new CurrentAccountNumber(10000);
+               // currentAccountNumberResource.save(currentAccountNumber1);
+
+                    Optional<CurrentAccountNumber> currentAccountNumber=currentAccountNumberResource.
+                            findById("6067db4b7805514fd5a5f196");
+
+
+                //currentAccountNumber.get().getCurrentAccountNumber()
+
+                int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
+                AccountInfo accountInfo1=new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
+                        customerSignupRequest.getAccountTYpe()
+                        ,LocalDate.now());
+                accountInfo1.setCurrentDate(LocalDate.now());
+                accountRepository.save(accountInfo1);
+                accountList.add(accountInfo1);
+                customer.setAccount(accountList);
                 customerRepositor.save(customer);
+                accountInfo1.setCustomer(customer);
+            //    accountRepository.save(accountInfo1);
+//                customerRepositor.save(customer);
+//                if(customerSignupRequest.getAccountTYpe().equals("SAVING")){
+//                    //super(accountNumber, balance,type, currentDate, customerId);
+//
+//                    SavingAccount account=new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
+//                            customerSignupRequest.getIntialAmount(),"SAVING",LocalDate.now(),customer);
+//                    accountRepository.save(account);
+//                    accountList.add(account);
+//                    customer.setAccount(accountList);
+//                    account.setCustomer(customer);
+//
+//                } else {
+//
+//                    CheckingAccount account=new CheckingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
+//                            customerSignupRequest.getIntialAmount(),"CHECKING",LocalDate.now(),customer);
+//                    accountRepository.save(account);
+//                    accountList.add(account);
+//                    customer.setAccount(accountList);
+//                    account.setCustomer(customer);
+//
+//                }
+                //   set branch for customer
+
+
+
+
                //
 
                 // update current account number
@@ -218,13 +231,8 @@ public class TellerController {
                 // save new account
 
                 //  Optional<CurrentAccountNumber> currentAccountNumbers=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
-                int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
-                AccountInfo accountInfo1=new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
-                        customerSignupRequest.getAccountTYpe()
-                        ,LocalDate.now());
-                accountInfo1.setCurrentDate(LocalDate.now());
-                accountRepository.save(accountInfo1);
-                //customerRepositor.save(customer);
+
+                   // customerRepositor.save(customer);
                 return new ResponseEntity<>(customer,HttpStatus.OK);
 
             }
