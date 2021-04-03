@@ -458,42 +458,49 @@ public class TellerController {
 
     @PostMapping("/withdraw")
     @PreAuthorize("hasRole('TELLER')")
-    public void makeWithdrawal(@RequestBody WithdrawalRequest transaction){
+    public ResponseEntity<Transaction> requestResponseEntity(@RequestBody Transaction transaction) {
+        try {
+            if (accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())) {
 
-        if(accountRepository.existsAccountInfoByAccountNumber(transaction.getAccountNumber())){
+                Optional<AccountInfo> account = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
+                if (account.isPresent() && account.get().getBalance() >= transaction.getAmount()) {
+                    Transaction transaction1 = new Transaction();
+                    transaction1.setType(TransactionType.WITHDRAWL);
+                    transaction1.setAmount(transaction.getAmount());
+                    transaction1.setFromAccount(transaction.getFromAccount());
+                    transaction1.setTransactionDate(LocalDate.now());
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-            Optional<AccountInfo> account= accountRepository.findAccountInfoByAccountNumber(transaction.getAccountNumber());
-           if( account.isPresent() && account.get().getBalance()>=transaction.getAmount()){
-               Transaction transaction1=new Transaction();
-               transaction1.setType(TransactionType.WITHDRAWL);
-               transaction1.setAmount(transaction.getAmount());
-               transaction1.setFromAccount(transaction.getAccountNumber());
-               transaction1.setTransactionDate(LocalDate.now());
+                    User currentUser = userRepository.findUserByUsername(auth.getName());
 
-
-               Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-               User currentUser=userRepository.findUserByUsername(auth.getName());
-
-               // find current teller
+                    // find current teller
 
 
-               //branch.getBranchId()  check this line
-               transaction1.setBranchId(currentUser.getBranchName());
+                    //branch.getBranchId()  check this line
+                    transaction1.setBranchId(currentUser.getBranchName());
 
-               account.get().setBalance(account.get().getBalance()- transaction.getAmount());
-               account.get().setCurrentDate(LocalDate.now());
-                accountRepository.save(account.get());
-               transactionRepository.save(transaction1);
+                    account.get().setBalance(account.get().getBalance() - transaction.getAmount());
+                    account.get().setCurrentDate(LocalDate.now());
+                    accountRepository.save(account.get());
+                    transactionRepository.save(transaction1);
+                    return new ResponseEntity<Transaction>(transaction, HttpStatus.OK);
 
-           }
+                }
 
-        } else{
-            System.out.println("Account not found");
+            } else {
+                System.out.println("Account not found");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-
+        return new ResponseEntity<Transaction>(transaction, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
+
+
+
+
 
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('TELLER')")
