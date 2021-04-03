@@ -2,10 +2,9 @@ package com.example.mpp.controllers;
 
 import com.example.mpp.models.*;
 import com.example.mpp.payload.request.TransferRequest;
-import com.example.mpp.repository.AccountRepository;
-import com.example.mpp.repository.CustomerRepository;
-import com.example.mpp.repository.TransactionRepository;
-import com.example.mpp.repository.UserRepository;
+import com.example.mpp.repository.*;
+import com.example.mpp.repository.resources.UserWithIDRepository;
+import com.example.mpp.resources.UserWithID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,26 +35,71 @@ public class CustomerController {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private UserWithIDRepository userWithIDRepository;
+
+
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public void transfer(@RequestBody TransferRequest transferRequest){
+    public ResponseEntity<Transaction> transfer(@RequestBody TransferRequest transferRequest){
         Transaction transaction = new Transaction();
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findUserByUsername(auth.getName());
         Customer customer = customerRepository.findCustomerByUser(user);
+        AccountInfo accountInfo = accountRepository.findAccountInfoByCustomer(customer);
+        if(accountInfo.getAccountNumber() == transferRequest.getToAccount()){
+            transaction.setCustomer(customer);
+            transaction.setAmount(transferRequest.getAmount());
+            transaction.setFromAccount(transferRequest.getFromAccount());
+            transaction.setToAccount(transferRequest.getToAccount());
 
-        transaction.setCustomer(customer);
-        transaction.setAmount(transferRequest.getAmount());
-        transaction.setFromAccount(transferRequest.getFromAccount());
-        transaction.setToAccount(transferRequest.getToAccount());
+            Optional<AccountInfo> accountInfo1 = accountRepository.findAccountInfoByAccountNumber(transferRequest.getToAccount());
+
+            if(accountInfo1.isPresent()){
+                AccountInfo accountInfo2 = accountInfo1.get();
+                transactionRepository.save(transaction);
+                List<Transaction> transactions = accountInfo.getTransactionList();
+                transactions.add(transaction);
+                accountInfo.setTransactionList(transactions);
+                accountRepository.save(accountInfo);
+
+                List<Transaction> transactions1 = accountInfo2.getTransactionList();
+                transactions1.add(transaction);
+                accountInfo2.setTransactionList(transactions1);
+                accountRepository.save(accountInfo2);
+
+                return new ResponseEntity<>(transaction, HttpStatus.OK);
+
+            } else {
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+
+
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/accounts")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<AccountInfo>> accounts(){
-        List<AccountInfo> accounts = accountRepository.findAll();
-        return new ResponseEntity<>(accounts, HttpStatus.OK);
+    public ResponseEntity<List<Customer>> accounts(){
+
+        List<Customer> users = customerRepository.findAll();
+
+//        List<Customer> c = customerRepository.findAll();
+
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        UserWithID userWithID = userWithIDRepository.findUserWithIDByUsername("dagy");
+
+
+//        User user = userRepository.findUserByUsername(auth.getName());
+//        Customer customer = customerRepository.findCustomerByUser(user);
+//        List<AccountInfo> accounts = accountRepository.findAllByCustomer(customer);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/account/{accountNumber}")
@@ -65,6 +109,19 @@ public class CustomerController {
         List<Transaction> transactions = transactionRepository.findTransactionsByAccountInfo(accountInfo.get());
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
+
+//    @GetMapping("/transactions")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    public ResponseEntity<List<Transaction>> transactions(){
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User user = userRepository.findUserByUsername(auth.getName());
+//
+////        Customer customer = customerRepositor.findCustomerByUserUsername(auth.getName());
+////        List<Transaction> transactions = transactionRepository.findTransactionsByCustomer(customer);
+//
+//
+//        return new ResponseEntity<>(transactions, HttpStatus.OK);
+//    }
 
 
 }
