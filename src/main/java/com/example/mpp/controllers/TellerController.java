@@ -195,6 +195,10 @@ public class TellerController {
                 customer.setAccount(accountList);
                 customerRepositor.save(customer);
                 accountInfo1.setCustomer(customer);
+
+                //save to customer
+                userWithIDRepository.save(new UserWithID(customer.getId(),user.getUsername()));
+
             //    accountRepository.save(accountInfo1);
 //                customerRepositor.save(customer);
 //                if(customerSignupRequest.getAccountTYpe().equals("SAVING")){
@@ -222,7 +226,6 @@ public class TellerController {
 
 
 
-               //
 
                 // update current account number
                 currentAccountNumber.get().setCurrentAccountNumber(currentAccountNumber.get().getCurrentAccountNumber()+1);
@@ -242,6 +245,11 @@ public class TellerController {
         }
 
     }
+
+
+
+
+
 
 
 
@@ -400,24 +408,25 @@ public class TellerController {
     }
 
 */
-   /*
+
 
     @PostMapping("/deposit")
     @PreAuthorize("hasRole('TELLER')")
     public ResponseEntity<AccountInfo> makeDeposit(@RequestBody DepositRequest transactionRequest){
         try {
             Optional<AccountInfo> crAccount =accountRepository.findAccountInfoByAccountNumber(transactionRequest.getAccountNumber());
+
             if (crAccount.isPresent()) {
                 AccountInfo accountInfo = crAccount.get();
                 Account account=null;
-                if(accountInfo.getType().equals("CHECKIN")) {
-                    account = new CheckingAccount(transactionRequest.getAccountNumber(),
-                            accountInfo.getBalance(),"CHECKIN",LocalDate.now(),accountInfo.getCustomerId());
+                if(accountInfo.getType().equals("CHECKING")) {
+//                    account = new CheckingAccount(transactionRequest.getAccountNumber(),
+//                            accountInfo.getBalance(),"CHECKING",LocalDate.now(),accountInfo.getCustomerId());
 
                 }
                 else if(accountInfo.getType().equals("SAVING")){
-                    account = new SavingAccount(transactionRequest.getAccountNumber(),accountInfo.getBalance(),"SAVING",LocalDate.now(),
-                            accountInfo.getCustomerId());
+//                    account = new SavingAccount(transactionRequest.getAccountNumber(),accountInfo.getBalance(),"SAVING",LocalDate.now(),
+//                            accountInfo.getCustomerId());
 
                 }
 //
@@ -462,14 +471,15 @@ public class TellerController {
                transaction1.setTransactionDate(LocalDate.now());
 
 
-               // find current teller
                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-               User teller = userRepository.findUserByUsername(auth.getName());
-               Branch branch = branchRepository.findBranchByTellersContains(teller);
+
+               User currentUser=userRepository.findUserByUsername(auth.getName());
+
+               // find current teller
 
 
                //branch.getBranchId()  check this line
-               transaction1.setBranchId(123);
+               transaction1.setBranchId(currentUser.getBranchName());
 
                account.get().setBalance(account.get().getBalance()- transaction.getAmount());
                account.get().setCurrentDate(LocalDate.now());
@@ -484,7 +494,7 @@ public class TellerController {
 
 
     }
-*/
+
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('TELLER')")
     public double totalDeposit(){

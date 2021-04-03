@@ -16,19 +16,20 @@ public class Transaction {
     private double amount;
     private int toAccount;
     private int fromAccount;
-    private int branchId;
+//    private int branchId;
+    private String branchName;
   private TransactionType type;
   public Transaction(){
 
   }
 
-    public Transaction( LocalDate transactionDate, double amount, int toAccount, int fromAccount, int branchId,TransactionType type) {
+    public Transaction( LocalDate transactionDate, double amount, int toAccount, int fromAccount, String branchId,TransactionType type) {
 
         this.transactionDate = transactionDate;
         this.amount = amount;
         this.toAccount = toAccount;
         this.fromAccount = fromAccount;
-        this.branchId = branchId;
+        this.branchName = branchId;
         this.type=type;
     }
     public TransactionType getType() {
@@ -76,11 +77,11 @@ public class Transaction {
         this.fromAccount = fromAccount;
     }
 
-    public int getBranchId() {
-        return branchId;
+    public String getBranchId() {
+        return branchName;
     }
 
-    public void setBranchId(int branchId) {
-        this.branchId = branchId;
+    public void setBranchId(String branchId) {
+        this.branchName = branchId;
     }
 }

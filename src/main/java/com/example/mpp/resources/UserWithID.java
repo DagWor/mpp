@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Component;
 
-@Document(collection="User-With-Id")
+@Document(collection="usernamewithid")
 public class UserWithID {
 
     @Id
