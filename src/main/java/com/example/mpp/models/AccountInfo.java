@@ -24,6 +24,7 @@ public class AccountInfo {
     private LocalDate currentDate;
     private Customer customer;
     private List<Transaction> transaction;
+    private String branchName ;
 
     public AccountInfo(){
 
@@ -104,5 +105,12 @@ public class AccountInfo {
 
     public void setCurrentDate(LocalDate currentDate) {
         this.currentDate = currentDate;
+    }
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 }

@@ -14,7 +14,11 @@ public class Customer {
     private int customerId;
 
     private User user;
+
+
+
     private List<AccountInfo > account;
+    private String branchName;
 
 
 
@@ -53,4 +57,13 @@ public class Customer {
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
+
 }

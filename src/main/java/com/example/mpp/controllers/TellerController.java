@@ -158,6 +158,7 @@ public class TellerController {
                 user.setAddress(address);
                 userRepository.save(user);
                 Customer customer = new Customer(user);
+                customer.setBranchName(currentUser.getBranchName());
                 List<AccountInfo> accountList = new ArrayList<>();
 
 
@@ -176,6 +177,7 @@ public class TellerController {
                         , LocalDate.now());
                 accountInfo1.setCurrentDate(LocalDate.now());
                 accountInfo1.setTransaction(transactions);
+                accountInfo1.setBranchName(currentUser.getBranchName());
                 accountRepository.save(accountInfo1);
                 accountList.add(accountInfo1);
                 customer.setAccount(accountList);
@@ -201,7 +203,13 @@ public class TellerController {
     }
 
 
-
+//    @PreAuthorize("hasRole('TELLER')")
+//    @PostMapping("/find-all-customer")
+//    public ResponseEntity<?> findAllCustomer() {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User currentUser = userRepository.findUserByUsername(auth.getName());
+//
+//    }
 
 
 
@@ -445,6 +453,12 @@ public class TellerController {
         return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
+
+//    @PostMapping("/findallcustomer")
+//    @PreAuthorize("hasRole('TELLER')")
+//    public ResponseEntity<Transaction> requestResponseEntity(){
+//
+//    }
 
 
     @PostMapping("/transfer")
