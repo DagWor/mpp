@@ -41,6 +41,7 @@ export default class Transactions extends Component {
                     content: response.data,
                     open: true
                 });
+                console.log(response.data)
             },
             error => {
                 this.setState({
@@ -61,7 +62,7 @@ export default class Transactions extends Component {
         if(this.state.content.length === 0){
 
             return (
-                <Typography style={{fontSize: 20, alignSelf: "center"}} color="textPrimary">Transactions</Typography>
+                <Typography style={{fontSize: 20, alignSelf: "center"}} color="textPrimary">No Transactions Available yet</Typography>
             )
 
         } else {
