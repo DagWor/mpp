@@ -165,6 +165,13 @@ public class TellerController {
                 User currentUser = userRepository.findUserByUsername(auth.getName());
                 user.setBranchName(currentUser.getBranchName());
                 user.setAddress(address);
+
+                Branch branch= branchRepository.findBranchByBranchName(user.getBranchName());
+
+                List<User> userList=branch.getUser();
+                userList.add(user);
+                branchRepository.save(branch);
+
                 userRepository.save(user);
                 Customer customer = new Customer(user);
                 customer.setBranchName(currentUser.getBranchName());
@@ -196,7 +203,7 @@ public class TellerController {
                 accountInfo1.setBranchName(currentUser.getBranchName());
                 accountRepository.save(accountInfo1);
                 accountList.add(accountInfo1);
-            //    customer.setAccount(accountList);
+                customer.setAccount(accountList);
                 customerRepositor.save(customer);
 //                accountInfo1.setCustomer(customer);
 
@@ -239,6 +246,9 @@ public class TellerController {
       return new ResponseEntity<>(transaction,HttpStatus.OK);
 
     }
+
+
+
 
 
     @GetMapping("/balance")
