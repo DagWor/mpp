@@ -1,6 +1,9 @@
 import axios from "axios";
+import authHeader from "./auth-header";
 
 const API_URL = "http://localhost:8080/api/auth/";
+const TELLER_API_URL = "http://localhost:8080/api/teller/";
+const ADMIN_API_URL = "http://localhost:8080/api/admin/";
 
 class AuthService {
     login(username, password) {
@@ -28,6 +31,23 @@ class AuthService {
             email,
             password
         });
+    }
+    registerTeller(username, email, password, firstName, lastName, ssn, street, city, postalCode, zipCode, country) {
+        return axios.post(ADMIN_API_URL + "create-teller", {
+            username,
+            email,
+            password,
+            firstName,
+            lastName,
+            ssn,
+            street,
+            city,
+            postalCode,
+            zipCode,
+            country
+        },  {
+            headers: authHeader()
+        } );
     }
 
     getCurrentUser() {

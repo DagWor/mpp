@@ -1,16 +1,20 @@
 package com.example.mpp.controllers;
 
 import com.example.mpp.models.*;
+import com.example.mpp.payload.request.TransferRequest;
 import com.example.mpp.repository.*;
-import com.example.mpp.security.jwt.JwtUtils;
+import com.example.mpp.repository.resources.UserWithIDRepository;
+import com.example.mpp.resources.UserWithID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,111 +28,110 @@ public class CustomerController {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    BranchRepository branchRepository;
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
-    @Autowired
     private AccountRepository accountRepository;
 
     @Autowired
-    private UserAccessRepository userAccessRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    DepositRepository depositRepository;
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private UserWithIDRepository userWithIDRepository;
+
 
     @PostMapping("/transfer")
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public void transfer(@RequestBody Transaction transaction) {
-        // transactionRepository.save(transaction);
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<Transaction> transfer(@Valid @RequestBody TransferRequest transferRequest) {
+        Transaction transaction = new Transaction();
 
-    }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findUserByUsername(auth.getName());
+        Customer customer = customerRepository.findCustomerByUser(user);
+        AccountInfo accountInfo = accountRepository.findAccountInfoByCustomer(customer);
+        if (accountInfo.getAccountNumber() == transferRequest.getToAccount()) {
+            transaction.setAmount(transferRequest.getAmount());
+            transaction.setFromAccount(transferRequest.getFromAccount());
+            transaction.setToAccount(transferRequest.getToAccount());
 
-    @PostMapping("/withdrawal")
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public void withdrawal(double amount) {
-        // transactionRepository.save(transaction);
+            Optional<AccountInfo> accountInfo1 = accountRepository.findAccountInfoByAccountNumber(transferRequest.getToAccount());
 
-    }
+            if (accountInfo1.isPresent()) {
+                AccountInfo accountInfo2 = accountInfo1.get();
+                transactionRepository.save(transaction);
+                List<Transaction> transactions = accountInfo.getTransaction();
+                transactions.add(transaction);
+                accountInfo.setTransaction(transactions);
+                accountRepository.save(accountInfo);
 
+                List<Transaction> transactions1 = accountInfo2.getTransaction();
+                transactions1.add(transaction);
+                accountInfo2.setTransaction(transactions1);
+                accountRepository.save(accountInfo2);
 
-    @GetMapping("/viewBalance")
-    @PreAuthorize("hasRole('Customer')")
-    public double viewBalance(@PathVariable("id") int accountNumber) {
-          double currentBalance = 0;
-        try {
+                return new ResponseEntity<>(transaction, HttpStatus.OK);
 
-            Optional<AccountInfo> accountInfo = accountRepository.findAccountInfoByAccountNumber(accountNumber);
-            AccountInfo accountInfo1=accountInfo.get();
-            currentBalance=accountInfo1.getBalance();
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            } else {
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return currentBalance;
+
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-     @GetMapping("/viewAccounts/{id")
-     @PreAuthorize("hasRole('Customer')")
-     public ResponseEntity<List<AccountInfo>> viewAccounts(@PathVariable("id") int customerId)
-     {
-       try {
-           List<AccountInfo> accountInfos = accountRepository.findAllByCustomerId(customerId);
-           if(accountInfos.size() == 0) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-           else return new ResponseEntity<>(accountInfos, HttpStatus.OK);
-
-           // accountInfo = accountInfo1.getAccountNumbers();
+    @GetMapping("/accounts")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<AccountInfo>> accounts() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findUserByUsername(auth.getName());
 
 
-       }catch (Exception e)
-       {
-           System.out.println(e.getMessage());
-           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-       }
-     }
+        Customer customer = customerRepository.findCustomerByUser(user);
+        if (customer != null){
+            List<AccountInfo> accounts = customer.getAccount();
+            return new ResponseEntity<>(accounts, HttpStatus.OK);
+        }
+        else return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-     @GetMapping("/viewTransactions/{id}")
-     @PreAuthorize("hasRole('Customer')")
-     public ResponseEntity<List<Transaction>> viewTransactions(@PathVariable("id") int customerId)
-     {
-         List<Transaction> transactionList = new ArrayList<>();
-         int accountNo;
+    /*@GetMapping("/account/{accountNumber}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<Transaction>> transactions(@PathVariable("accountNumber") int accountNumber) {
+        Optional<AccountInfo> accountInfo = accountRepository.findAccountInfoByAccountNumber(accountNumber);
+        List<Transaction> transactions = transactionRepository.findTransactionsByAccountNumber(accountInfo.get().getAccountNumber());
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }*/
 
-         //get account number first
+    @GetMapping("/transactions")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<Transaction>> transactions(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findUserByUsername(auth.getName());
 
-         try{
-             Optional<AccountInfo> accountInfo = accountRepository.findAccountInfoByCustomerId(customerId);
-             AccountInfo accountInfo1=accountInfo.get();
-             accountNo=accountInfo1.getAccountNumber();
+        Customer customer = customerRepository.findCustomerByUser(user);
 
-             Optional<Transaction> transaction= Optional.ofNullable(transactionRepository.findTransactionsByToAccount(accountNo));
-             Optional<Transaction> transaction1= Optional.ofNullable(transactionRepository.findTransactionsByFromAccount(accountNo));
-
-
-            return new ResponseEntity<>(transactionList, HttpStatus.OK);
-
-
-         }catch(Exception e)
-         {
-             System.out.println(e.getMessage());
-             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-         }
+        if(customer != null){
+            List<AccountInfo> accounts = customer.getAccount();
+            List<Transaction> transactions = new ArrayList<>();
 
 
-     }
+
+            for (AccountInfo accountInfo : accounts){
+                if(accountInfo.getTransaction() != null){
+                    for (Transaction transaction : accountInfo.getTransaction()){
+                        transactions.add(transaction);
+                    }
+                }
+            }
+
+
+            return new ResponseEntity<>(transactions, HttpStatus.OK);
+        }
+        else return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 
 }

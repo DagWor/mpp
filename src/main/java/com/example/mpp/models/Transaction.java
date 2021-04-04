@@ -84,4 +84,5 @@ public class Transaction {
     public void setBranchId(String branchId) {
         this.branchName = branchId;
     }
+
 }

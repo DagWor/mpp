@@ -22,40 +22,53 @@ public class CreateBranchRequest {
     //    private Set<String> roles;
     @NotBlank
     private String  firstName;
-
+    @NotBlank
     private String lastName;
-
+    @NotBlank
     private int ssn;
-
+    @NotBlank
     private String street;
-
+    @NotBlank
     private String city;
-
+    @NotBlank
     private String postalCode;
-
+    @NotBlank
     private int zipCode;
-
+    @NotBlank
     private String country;
 
-
+    @NotBlank
     private String  adminFirstName;
 
-
+    @NotBlank
     private int adminSsn;
-
+    @NotBlank
     private String adminStreet;
-
+    @NotBlank
     private String adminCity;
-
+    @NotBlank
     private String adminPostalCode;
-
+    @NotBlank
     private int adminZipCode;
-
+    @NotBlank
     private String adminCountry;
 
 
 
-
+    public CreateBranchRequest(@NotBlank @Size(min = 3, max = 20) String username, @NotBlank @Size(max = 50) @Email String email, @NotBlank String password, @NotBlank String firstName, @NotBlank String lastName, @NotBlank int ssn, @NotBlank String street, @NotBlank String city,
+                               @NotBlank String postalCode, @NotBlank int zipCode, @NotBlank String country) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.ssn = ssn;
+        this.street = street;
+        this.city = city;
+        this.postalCode = postalCode;
+        this.zipCode = zipCode;
+        this.country = country;
+    }
 
     public String getBranchName() {
         return branchName;

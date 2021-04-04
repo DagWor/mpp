@@ -12,6 +12,10 @@ import Profile from "./components/profile.component";
 import BoardUser from "./components/user/board-user.component";
 import BoardTeller from "./components/teller/board-teller.component";
 import BoardAdmin from "./components/admin/board-admin.component";
+import Accounts from "./components/user/accounts";
+import Transactions from "./components/user/transaction.component";
+import TellerTransactions from "./components/teller/teller-transactions.component";
+import RegisterTeller from "./components/admin/create-teller.component";
 
 class App extends Component {
   constructor(props) {
@@ -19,7 +23,7 @@ class App extends Component {
     this.logOut = this.logOut.bind(this);
 
     this.state = {
-      showModeratorBoard: false,
+      showTellerBoard: false,
       showAdminBoard: false,
       currentUser: undefined,
     };
@@ -30,10 +34,9 @@ class App extends Component {
 
     if (user) {
       let roles = user.roles;
-      console.log(roles.includes("ROLE_TELLER"))
       this.setState({
         currentUser: user,
-        // showTellerBoard: this.roles.include("ROLE_TELLER"),
+        showCustomerBoard: roles.includes("ROLE_USER"),
         showTellerBoard: roles.includes("ROLE_TELLER"),
         showAdminBoard: roles.includes("ROLE_ADMIN"),
       });
@@ -45,7 +48,7 @@ class App extends Component {
   }
 
   render() {
-    const { currentUser, showTellerBoard, showAdminBoard } = this.state;
+    const { currentUser, showTellerBoard, showAdminBoard, showCustomerBoard } = this.state;
 
     return (
         <div>
@@ -80,6 +83,46 @@ class App extends Component {
                   <li className="nav-item">
                     <Link to={"/user"} className="nav-link">
                       User
+                    </Link>
+                  </li>
+              )}
+
+              {showTellerBoard && (
+                  <li className="nav-item">
+                    <Link to={"/teller/accounts"} className="nav-link">
+                      Accounts
+                    </Link>
+                  </li>
+              )}
+
+              {currentUser && !showTellerBoard && !showAdminBoard && (
+                  <li className="nav-item">
+                    <Link to={"/customer/accounts"} className="nav-link">
+                      Accounts
+                    </Link>
+                  </li>
+              )}
+
+              {currentUser && !showTellerBoard && !showAdminBoard &&(
+                  <li className="nav-item">
+                    <Link to={"/customer/transactions"} className="nav-link">
+                      Transactions
+                    </Link>
+                  </li>
+              )}
+
+              {showAdminBoard && (
+                  <li className="nav-item">
+                    <Link to={"/admin/create-teller"} className="nav-link">
+                      Create Teller
+                    </Link>
+                  </li>
+              )}
+
+              {showTellerBoard &&(
+                  <li className="nav-item">
+                    <Link to={"/teller/transactions"} className="nav-link">
+                      Transactions
                     </Link>
                   </li>
               )}
@@ -124,6 +167,10 @@ class App extends Component {
               <Route path="/user" component={BoardUser} />
               <Route path="/mod" component={BoardTeller} />
               <Route path="/admin" component={BoardAdmin} />
+              <Route path="/customer/accounts" component={Accounts} />
+              <Route path="/customer/transactions" component={Transactions} />
+              <Route path="/teller/transactions" component={TellerTransactions} />
+              <Route path="/admin/create-teller" component={RegisterTeller} />
             </Switch>
           </div>
         </div>
