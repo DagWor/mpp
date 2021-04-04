@@ -473,9 +473,34 @@ public class TellerController {
         return 0.0;
     }
 
-    @GetMapping("/customerss")
-    public ResponseEntity<List<Customer>> customer() {
-        List<Customer> customers = customerRepositor.findAll();
-        return new ResponseEntity<>(customers, HttpStatus.OK);
+    @PostMapping("/listOfCustomer")
+    @PreAuthorize("hasRole('TELLER')")
+    public ResponseEntity<List<Customer>> listOfCustomer() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userRepository.findUserByUsername(auth.getName());
+        List<Customer> customerList=customerRepositor.findCustomerByBranchName(currentUser.getBranchName());
+      return new ResponseEntity<>(customerList,HttpStatus.OK);
     }
+
+    @PostMapping("/listoftransaction")
+    @PreAuthorize("hasRole('TELLER')")
+    public ResponseEntity<List<Transaction>> listOfTransaction() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userRepository.findUserByUsername(auth.getName());
+        List<Transaction> transactionList=transactionRepository.findTransactionByBranchName(currentUser.getBranchName());
+        return new ResponseEntity<>(transactionList,HttpStatus.OK);
+    }
+
+    @PostMapping("/listoftransaction")
+    @PreAuthorize("hasRole('TELLER')")
+    public ResponseEntity<List<AccountInfo>> listOfAccount() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userRepository.findUserByUsername(auth.getName());
+        List<AccountInfo> accountInfoList=accountRepository.findAccountInfoByBranchName(currentUser.getBranchName());
+        return new ResponseEntity<>(accountInfoList,HttpStatus.OK);
+    }
+
+
+
+
 }
