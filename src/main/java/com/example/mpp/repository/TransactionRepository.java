@@ -14,7 +14,5 @@ public interface TransactionRepository extends MongoRepository<Transaction,Integ
           Transaction findTransactionsByBranchId(String id);
           Transaction findTransactionsByFromAccount(int account);
           Transaction findTransactionsByToAccount(int account);
-    List<Transaction> findTransactionsByCustomer(Customer customer);
-    List<Transaction> findTransactionsByAccountNumber(int accountNumber);
 
 }
