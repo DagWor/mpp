@@ -21,9 +21,9 @@ class UserService {
         return axios.get(API_URL + 'mod', { headers: authHeader() });
     }
 
-    // getAdminBoard() {
-    //     return axios.get(ADMIN_API_URL + 'admin', { headers: authHeader() });
-    // }
+    getAdminBoard() {
+        return axios.get(ADMIN_API_URL, { headers: authHeader() });
+    }
 
     getCustomerAccounts() {
         return axios.get(CUSTOMER_API_URL + 'accounts', { headers: authHeader() });
@@ -37,9 +37,15 @@ class UserService {
         return axios.get(TELLER_API_URL + 'listoftransaction', { headers: authHeader() });
     }
 
+    getTellerAccounts = () => {
+        return axios.get(TELLER_API_URL + 'listofaccount', { headers: authHeader() });
+    }
+
     createTeller = (something) => {
         return axios.post(TELLER_API_URL + 'create-teller', {something}, { headers: authHeader() });
     }
+
+
 }
 
 export default new UserService();

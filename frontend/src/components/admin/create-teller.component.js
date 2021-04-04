@@ -4,7 +4,8 @@ import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
 
-import AuthService from "../../services/auth.service";
+import AdminService from "../../services/admin.service";
+import {Typography} from "@material-ui/core";
 
 const required = value => {
     if (!value) {
@@ -46,6 +47,16 @@ const vpassword = value => {
     }
 };
 
+const vfirstname = value => {
+    if (value.length < 6 || value.length > 40) {
+        return (
+            <div className="alert alert-danger" role="alert">
+                The first Name must be between 6 and 40 characters.
+            </div>
+        );
+    }
+};
+
 export default class RegisterTeller extends Component {
     constructor(props) {
         super(props);
@@ -53,14 +64,14 @@ export default class RegisterTeller extends Component {
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangeEmail = this.onChangeEmail.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
-        this.onChangeFirstName = this.onChangeFirstName(this);
-        this.onChangeLastName = this.onChangeLastName(this);
-        this.onChangeSsn = this.onChangeSsn(this);
-        this.onChangeStreet = this.onChangeStreet(this);
-        this.onChangeCity = this.onChangeCity(this);
-        this.onChangePostalCode = this.onChangePostalCode(this);
-        this.onChangeZipCode = this.onChangeZipCode(this);
-        this.onChangeCountry = this.onChangeCountry(this);
+        this.onChangeFirstName = this.onChangeFirstName.bind(this);
+        this.onChangeLastName = this.onChangeLastName.bind(this);
+        this.onChangeSsn = this.onChangeSsn.bind(this);
+        this.onChangeStreet = this.onChangeStreet.bind(this);
+        this.onChangeCity = this.onChangeCity.bind(this);
+        this.onChangePostalCode = this.onChangePostalCode.bind(this);
+        this.onChangeZipCode = this.onChangeZipCode.bind(this);
+        this.onChangeCountry = this.onChangeCountry.bind(this);
 
 
         this.state = {
@@ -74,7 +85,9 @@ export default class RegisterTeller extends Component {
             city:"",
             postalCode:"",
             zipCode:0,
-            country:""
+            country:"",
+            successful: false,
+            message: ""
         };
     }
 
@@ -98,7 +111,7 @@ export default class RegisterTeller extends Component {
 
     onChangeFirstName(e) {
         this.setState({
-            firstName: e.target.value
+            firstName: e.target.firstName
         });
     }
 
@@ -156,7 +169,7 @@ export default class RegisterTeller extends Component {
         this.form.validateAll();
 
         if (this.checkBtn.context._errors.length === 0) {
-            AuthService.registerTeller(
+            AdminService.registerTeller(
                 this.state.username,
                 this.state.email,
                 this.state.password,
@@ -195,6 +208,11 @@ export default class RegisterTeller extends Component {
     render() {
         return (
             <div className="col-md-12">
+
+                <Typography style={{fontSize: 24}} color="textSecondary" gutterBottom align={"center"}>
+                    <strong>Create Teller Account</strong>
+                    <br />
+                </Typography>
                 <div className="card card-container">
                     <img
                         src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
@@ -247,11 +265,11 @@ export default class RegisterTeller extends Component {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="firstName">First Name</label>
+                                    <label htmlFor="firstname">First Name</label>
                                     <Input
                                         type="text"
                                         className="form-control"
-                                        name="firstName"
+                                        name="firstname"
                                         value={this.state.firstName}
                                         onChange={this.onChangeFirstName}
                                         validations={[required]}
@@ -343,7 +361,7 @@ export default class RegisterTeller extends Component {
                                 </div>
 
                                 <div className="form-group">
-                                    <button className="btn btn-primary btn-block">Create Customer</button>
+                                    <button className="btn btn-primary btn-block">Create Teller</button>
                                 </div>
                             </div>
                         )}

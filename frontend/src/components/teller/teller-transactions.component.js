@@ -1,15 +1,8 @@
 import React, { Component } from "react";
 
 import UserService from "../../services/user.service";
-import {Button, Card, CardContent, Container, Typography} from "@material-ui/core";
-import Dialog from "@material-ui/core/Dialog";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Divider from "@material-ui/core/Divider";
-import Slide from "@material-ui/core/Slide";
-import {Message} from "@material-ui/icons";
+import {Card, CardContent, Container, Typography} from "@material-ui/core";
+
 
 
 export default class TellerTransactions extends Component {
@@ -55,6 +48,7 @@ export default class TellerTransactions extends Component {
     }
 
     render() {
+        console.log(this.state.content.length)
         if(this.state.content.length === 0){
 
         return (

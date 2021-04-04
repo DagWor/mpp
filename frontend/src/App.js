@@ -16,6 +16,10 @@ import Accounts from "./components/user/accounts";
 import Transactions from "./components/user/transaction.component";
 import TellerTransactions from "./components/teller/teller-transactions.component";
 import RegisterTeller from "./components/admin/create-teller.component";
+import TellerAccounts from "./components/teller/teller-accounts.component";
+import AdminTellers from "./components/admin/tellers.component";
+import BranchDetails from "./components/admin/branch-report.component";
+import RegisterCustomer from "./components/teller/create-customer.component";
 
 class App extends Component {
   constructor(props) {
@@ -36,9 +40,10 @@ class App extends Component {
       let roles = user.roles;
       this.setState({
         currentUser: user,
-        showCustomerBoard: roles.includes("ROLE_USER"),
-        showTellerBoard: roles.includes("ROLE_TELLER"),
-        showAdminBoard: roles.includes("ROLE_ADMIN"),
+        showCustomerBoard: roles.includes('ROLE_USER'),
+        showTellerBoard: roles.includes('ROLE_TELLER'),
+        showAdminBoard: roles.includes('ROLE_ADMIN'),
+        showSuperAdminBoard: roles.includes('ROLE_HEAD_OFFICE')
       });
     }
   }
@@ -48,8 +53,9 @@ class App extends Component {
   }
 
   render() {
-    const { currentUser, showTellerBoard, showAdminBoard, showCustomerBoard } = this.state;
+    const { currentUser, showTellerBoard, showAdminBoard, showSuperAdminBoard, showCustomerBoard } = this.state;
 
+    console.log(currentUser, showTellerBoard, showAdminBoard, showSuperAdminBoard, showCustomerBoard);
     return (
         <div>
           <nav className="navbar navbar-expand navbar-dark bg-dark">
@@ -63,7 +69,7 @@ class App extends Component {
                 </Link>
               </li>
 
-              {showTellerBoard && (
+              {showTellerBoard && !showSuperAdminBoard && (
                   <li className="nav-item">
                     <Link to={"/teller"} className="nav-link">
                       Teller Board
@@ -95,6 +101,14 @@ class App extends Component {
                   </li>
               )}
 
+              {showTellerBoard && (
+                  <li className="nav-item">
+                    <Link to={"/teller/create-customer"} className="nav-link">
+                      Create Account
+                    </Link>
+                  </li>
+              )}
+
               {currentUser && !showTellerBoard && !showAdminBoard && (
                   <li className="nav-item">
                     <Link to={"/customer/accounts"} className="nav-link">
@@ -111,18 +125,58 @@ class App extends Component {
                   </li>
               )}
 
+              {showSuperAdminBoard &&(
+                  <li className="nav-item">
+                    <Link to={"/customer/transactions"} className="nav-link">
+                      Branches
+                    </Link>
+                  </li>
+              )}
+
+              {showSuperAdminBoard &&(
+                  <li className="nav-item">
+                    <Link to={"/customer/transactions"} className="nav-link">
+                      Branch Managers
+                    </Link>
+                  </li>
+              )}
+
               {showAdminBoard && (
                   <li className="nav-item">
-                    <Link to={"/admin/create-teller"} className="nav-link">
+                    <Link to={"/create-teller"} className="nav-link">
                       Create Teller
+                    </Link>
+                  </li>
+              )}
+
+              {showAdminBoard && (
+                  <li className="nav-item">
+                    <Link to={"/admin/tellers"} className="nav-link">
+                      Tellers
+                    </Link>
+                  </li>
+              )}
+
+              {showAdminBoard && (
+                  <li className="nav-item">
+                    <Link to={"/admin/branch-report"} className="nav-link">
+                      Branch Details
+                    </Link>
+                  </li>
+              )}
+
+              {!showCustomerBoard && showTellerBoard &&(
+                  <li className="nav-item">
+                    <Link to={"/teller/transactions"} className="nav-link">
+                      Transactions
                     </Link>
                   </li>
               )}
 
               {showTellerBoard &&(
                   <li className="nav-item">
-                    <Link to={"/teller/transactions"} className="nav-link">
-                      Transactions
+                    <Link to={"/teller/accounts"} className="nav-link">
+                      Branch Accounts
                     </Link>
                   </li>
               )}
@@ -165,12 +219,16 @@ class App extends Component {
               <Route exact path="/register" component={Register} />
               <Route exact path="/profile" component={Profile} />
               <Route path="/user" component={BoardUser} />
-              <Route path="/mod" component={BoardTeller} />
-              <Route path="/admin" component={BoardAdmin} />
+              {/*<Route path="/mod" component={BoardTeller} />*/}
+              {/*<Route path="/admin" component={BoardAdmin} />*/}
               <Route path="/customer/accounts" component={Accounts} />
               <Route path="/customer/transactions" component={Transactions} />
               <Route path="/teller/transactions" component={TellerTransactions} />
-              <Route path="/admin/create-teller" component={RegisterTeller} />
+              <Route path="/teller/accounts" component={TellerAccounts} />
+              <Route path="/teller/create-customer" component={RegisterCustomer} />
+              <Route path="/create-teller" component={RegisterTeller} />
+              <Route path="/admin/tellers" component={AdminTellers} />
+              <Route path="/admin/branch-report" component={BranchDetails} />
             </Switch>
           </div>
         </div>
