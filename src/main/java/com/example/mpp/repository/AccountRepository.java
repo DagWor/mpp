@@ -12,5 +12,7 @@ public interface AccountRepository extends MongoRepository<AccountInfo,Integer> 
     boolean existsAccountInfoByAccountNumber(int accountNumber);
     AccountInfo findAccountInfoByCustomer(Customer customerId);
     Optional <AccountInfo> findAccountInfoByCustomerId(int customerId);
+    List<AccountInfo> findAllByCustomerId(int customerId);
+    List<AccountInfo> findAccountInfoByBranchName(String branchName);
     List<AccountInfo> findAllByCustomer(Customer customerId);
 }

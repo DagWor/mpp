@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface TransactionRepository extends MongoRepository<Transaction,Integer> {
           Transaction findTransactionsByTransactionId(String  id);
@@ -14,5 +15,6 @@ public interface TransactionRepository extends MongoRepository<Transaction,Integ
           Transaction findTransactionsByBranchId(String id);
           Transaction findTransactionsByFromAccount(int account);
           Transaction findTransactionsByToAccount(int account);
+          List<Transaction> findTransactionByBranchName(String branchName);
 
 }

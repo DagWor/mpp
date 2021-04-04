@@ -49,7 +49,7 @@ public class TellerController {
     @Autowired
     JwtUtils jwtUtils;
     @Autowired
-   private AccountRepository accountRepository;
+    private AccountRepository accountRepository;
     @Autowired
     TransactionRepository transactionRepository;
 
@@ -67,34 +67,34 @@ public class TellerController {
 
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-account")
-    public ResponseEntity<?> createAccount(@Valid @RequestBody CreateAccountRequest accountInfo){
-        try{
-             //   public AccountInfo( int accountNumber, double balance, AccountType type, LocalDate currentDate) {
+    public ResponseEntity<?> createAccount(@Valid @RequestBody CreateAccountRequest accountInfo) {
+        try {
+            //   public AccountInfo( int accountNumber, double balance, AccountType type, LocalDate currentDate) {
 
-          Optional<User> customerUser=userRepository.findByUsername(accountInfo.getUsername());
-            if(customerUser.isPresent()){
-                if(customerRepositor.existsCustomerByUser(customerUser.get())){
-                    Customer customer=customerRepositor.findCustomerByUser(customerUser.get());
-                    Optional<CurrentAccountNumber> currentAccountNumber=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
-                    int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
-                    if(!accountRepository.existsAccountInfoByAccountNumber(accountNumber)){
-                        AccountInfo accountInfo1=new AccountInfo(accountNumber, accountInfo.getBalance(),accountInfo.getType()
-                                ,accountInfo.getCurrentDate());
+            Optional<User> customerUser = userRepository.findByUsername(accountInfo.getUsername());
+            if (customerUser.isPresent()) {
+                if (customerRepositor.existsCustomerByUser(customerUser.get())) {
+                    Customer customer = customerRepositor.findCustomerByUser(customerUser.get());
+                    Optional<CurrentAccountNumber> currentAccountNumber = currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
+                    int accountNumber = currentAccountNumber.get().getCurrentAccountNumber() + 1;
+                    if (!accountRepository.existsAccountInfoByAccountNumber(accountNumber)) {
+                        AccountInfo accountInfo1 = new AccountInfo(accountNumber, accountInfo.getBalance(), accountInfo.getType()
+                                , accountInfo.getCurrentDate());
                         accountInfo1.setCurrentDate(LocalDate.now());
                         accountRepository.save(accountInfo1);
-                        List<AccountInfo> accountList=customer.getAccount();
+                        List<AccountInfo> accountList = customer.getAccount();
 
-                       if(accountInfo.getType().equals("SAVING")){
+                        if (accountInfo.getType().equals("SAVING")) {
                             //super(accountNumber, balance,type, currentDate, customerId);
-                            SavingAccount account=new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
-                                    accountInfo.getBalance(),"SAVING",LocalDate.now(),customer);
+                            SavingAccount account = new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber() + 1,
+                                    accountInfo.getBalance(), "SAVING", LocalDate.now(), customer);
                             accountList.add(account);
                             customer.setAccount(accountList);
                             account.setCustomer(customer);
 
                         } else {
-                            CheckingAccount account=new CheckingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
-                                    accountInfo.getBalance(),"CHECKING",LocalDate.now(),customer);
+                            CheckingAccount account = new CheckingAccount(currentAccountNumber.get().getCurrentAccountNumber() + 1,
+                                    accountInfo.getBalance(), "CHECKING", LocalDate.now(), customer);
                             accountList.add(account);
                             customer.setAccount(accountList);
                             account.setCustomer(customer);
@@ -102,31 +102,23 @@ public class TellerController {
                         }
 
                         accountRepository.save(accountInfo1);
-                       customerRepositor.save(customer);
+                        customerRepositor.save(customer);
 
                     }
 
 
                 }
 
+            } else {
+
             }
 
 
-
-             else{
-
-             }
-
-
-                return new ResponseEntity<>(accountInfo, HttpStatus.CREATED);
+            return new ResponseEntity<>(accountInfo, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    catch (Exception e) {
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    }
-
-
-
 
 
     @PreAuthorize("hasRole('TELLER')")
@@ -137,14 +129,11 @@ public class TellerController {
                 return ResponseEntity
                         .badRequest()
                         .body(new MessageResponse("Username already taken"));
-            }
-            else
-            if(userRepository.existsByEmail(customerSignupRequest.getEmail())){
+            } else if (userRepository.existsByEmail(customerSignupRequest.getEmail())) {
                 return ResponseEntity
                         .badRequest()
                         .body(new MessageResponse("Email already taken"));
-            }
-            else {
+            } else {
                 // find list of roles
                 Set<Role> roles = new HashSet<>();
 
@@ -157,41 +146,40 @@ public class TellerController {
                 //Address(String street, String city, String postalCode, int zipCode, String country) {
 
                 // create customer address
-                Address address= new Address(customerSignupRequest.getStreet(),customerSignupRequest.getCity(),
-                        customerSignupRequest.getPostalCode(),customerSignupRequest.getZipCode(),customerSignupRequest.getCountry() );
+                Address address = new Address(customerSignupRequest.getStreet(), customerSignupRequest.getCity(),
+                        customerSignupRequest.getPostalCode(), customerSignupRequest.getZipCode(), customerSignupRequest.getCountry());
                 //
                 // create customer account number currentAccountNumberResource
                 // Customer( Address address, User user)
-                User user=new User(customerSignupRequest.getUsername(),customerSignupRequest.getEmail()
-                        ,encoder.encode(customerSignupRequest.getPassword()),roles);
+                User user = new User(customerSignupRequest.getUsername(), customerSignupRequest.getEmail()
+                        , encoder.encode(customerSignupRequest.getPassword()), roles);
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-                User currentUser=userRepository.findUserByUsername(auth.getName());
+                User currentUser = userRepository.findUserByUsername(auth.getName());
                 user.setBranchName(currentUser.getBranchName());
                 user.setAddress(address);
-
-
                 userRepository.save(user);
+                Customer customer = new Customer(user);
+                customer.setBranchName(currentUser.getBranchName());
+                List<AccountInfo> accountList = new ArrayList<>();
 
 
-                Customer customer=new Customer(user);
-                List<AccountInfo> accountList=new ArrayList<>();
+                //CurrentAccountNumber currentAccountNumber1=new CurrentAccountNumber(10000);
+                // currentAccountNumberResource.save(currentAccountNumber1);
 
-
-                    //CurrentAccountNumber currentAccountNumber1=new CurrentAccountNumber(10000);
-               // currentAccountNumberResource.save(currentAccountNumber1);
-
-                    Optional<CurrentAccountNumber> currentAccountNumber=currentAccountNumberResource.
-                            findById("6067db4b7805514fd5a5f196");
+                Optional<CurrentAccountNumber> currentAccountNumber = currentAccountNumberResource.
+                        findById("6067db4b7805514fd5a5f196");
 
 
                 //currentAccountNumber.get().getCurrentAccountNumber()
-
-                int accountNumber=currentAccountNumber.get().getCurrentAccountNumber()+1;
-                AccountInfo accountInfo1=new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
+                List<Transaction> transactions=null;
+                int accountNumber = currentAccountNumber.get().getCurrentAccountNumber() + 1;
+                AccountInfo accountInfo1 = new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
                         customerSignupRequest.getAccountTYpe()
-                        ,LocalDate.now());
+                        , LocalDate.now());
                 accountInfo1.setCurrentDate(LocalDate.now());
+                accountInfo1.setTransaction(transactions);
+                accountInfo1.setBranchName(currentUser.getBranchName());
                 accountRepository.save(accountInfo1);
                 accountList.add(accountInfo1);
                 customer.setAccount(accountList);
@@ -199,57 +187,31 @@ public class TellerController {
                 accountInfo1.setCustomer(customer);
 
                 //save to customer
-                userWithIDRepository.save(new UserWithID(customer.getId(),user.getUsername()));
-
-            //    accountRepository.save(accountInfo1);
-//                customerRepositor.save(customer);
-//                if(customerSignupRequest.getAccountTYpe().equals("SAVING")){
-//                    //super(accountNumber, balance,type, currentDate, customerId);
-//
-//                    SavingAccount account=new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
-//                            customerSignupRequest.getIntialAmount(),"SAVING",LocalDate.now(),customer);
-//                    accountRepository.save(account);
-//                    accountList.add(account);
-//                    customer.setAccount(accountList);
-//                    account.setCustomer(customer);
-//
-//                } else {
-//
-//                    CheckingAccount account=new CheckingAccount(currentAccountNumber.get().getCurrentAccountNumber()+1,
-//                            customerSignupRequest.getIntialAmount(),"CHECKING",LocalDate.now(),customer);
-//                    accountRepository.save(account);
-//                    accountList.add(account);
-//                    customer.setAccount(accountList);
-//                    account.setCustomer(customer);
-//
-//                }
-                //   set branch for customer
-
-
-
+                userWithIDRepository.save(new UserWithID(customer.getId(), user.getUsername()));
 
 
                 // update current account number
-                currentAccountNumber.get().setCurrentAccountNumber(currentAccountNumber.get().getCurrentAccountNumber()+1);
+                currentAccountNumber.get().setCurrentAccountNumber(currentAccountNumber.get().getCurrentAccountNumber() + 1);
                 currentAccountNumberResource.save(currentAccountNumber.get());
 
-                // save new account
-
-                //  Optional<CurrentAccountNumber> currentAccountNumbers=currentAccountNumberResource.findById("6064ccb32259ef7531409d04");
-
-                   // customerRepositor.save(customer);
-                return new ResponseEntity<>(customer,HttpStatus.OK);
+                return new ResponseEntity<>(customer, HttpStatus.OK);
 
             }
 
-            } catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
 
-
+//    @PreAuthorize("hasRole('TELLER')")
+//    @PostMapping("/find-all-customer")
+//    public ResponseEntity<?> findAllCustomer() {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User currentUser = userRepository.findUserByUsername(auth.getName());
+//
+//    }
 
 
 
@@ -296,24 +258,7 @@ public class TellerController {
 
                 Branch branch = branchRepository.findBranchByTellersContains(teller);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                User _user = userRepository.save(new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+              User _user = userRepository.save(new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
                         encoder.encode(signUpRequest.getPassword())));
                 _user.setRoles(roles);
 
@@ -414,104 +359,150 @@ public class TellerController {
 
     @PostMapping("/deposit")
     @PreAuthorize("hasRole('TELLER')")
-    public ResponseEntity<AccountInfo> makeDeposit(@RequestBody DepositRequest transactionRequest){
+    public ResponseEntity<AccountInfo> makeDeposit(@RequestBody Transaction transactionRequest) {
         try {
-            Optional<AccountInfo> crAccount =accountRepository.findAccountInfoByAccountNumber(transactionRequest.getAccountNumber());
+            Optional<AccountInfo> crAccount = accountRepository.
+                    findAccountInfoByAccountNumber(transactionRequest.getToAccount());
 
             if (crAccount.isPresent()) {
                 AccountInfo accountInfo = crAccount.get();
-                Account account=null;
-                if(accountInfo.getType().equals("CHECKING")) {
+                Account account = null;
+                if (accountInfo.getType().equals("CHECKING")) {
 //                    account = new CheckingAccount(transactionRequest.getAccountNumber(),
 //                            accountInfo.getBalance(),"CHECKING",LocalDate.now(),accountInfo.getCustomerId());
 
-                }
-                else if(accountInfo.getType().equals("SAVING")){
+                } else if (accountInfo.getType().equals("SAVING")) {
 //                    account = new SavingAccount(transactionRequest.getAccountNumber(),accountInfo.getBalance(),"SAVING",LocalDate.now(),
 //                            accountInfo.getCustomerId());
 
                 }
 //
-                if(account!=null){
+                if (account != null) {
                     account.getInterst();
-                    accountInfo.setBalance(account.getBalance()+transactionRequest.getAmount());
+                    accountInfo.setBalance(account.getBalance() + transactionRequest.getAmount());
                     accountInfo.setCurrentDate(LocalDate.now());
                     accountRepository.save(accountInfo);
 
-                    DepositTransaction transactions = new DepositTransaction(LocalDate.now(),transactionRequest.getAmount(),transactionRequest.getAccountNumber(),123);
-                    depositRepository.save(transactions);
+//                    Transaction transactions = new DepositTransaction(LocalDate.now(), transactionRequest.getAmount(),
+//                            transactionRequest.getToAccount());
+//                    depositRepository.save(transactions);
 
                 }
 
-    //public DepositTransaction( LocalDate transactionDate, @NotBlank double amount, int toAccount, int branchId, TransactionType type) {
+                //public DepositTransaction( LocalDate transactionDate, @NotBlank double amount, int toAccount, int branchId, TransactionType type) {
 
 
                 //transation to be saved
 
-                return new ResponseEntity<>(accountInfo,HttpStatus.OK);
+                return new ResponseEntity<>(accountInfo, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            else{ return  new ResponseEntity<>(HttpStatus.NO_CONTENT);}
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return  new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/withdraw")
     @PreAuthorize("hasRole('TELLER')")
-    public void makeWithdrawal(@RequestBody WithdrawalRequest transaction){
+    public ResponseEntity<Transaction> requestResponseEntity(@RequestBody Transaction transaction) {
+        try {
+            if (accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())) {
 
-        if(accountRepository.existsAccountInfoByAccountNumber(transaction.getAccountNumber())){
+                Optional<AccountInfo> account = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
+                if (account.isPresent() && account.get().getBalance() >= transaction.getAmount()) {
+                    Transaction transaction1 = new Transaction();
+                    transaction1.setType(TransactionType.WITHDRAWL);
+                    transaction1.setAmount(transaction.getAmount());
+                    transaction1.setFromAccount(transaction.getFromAccount());
+                    transaction1.setTransactionDate(LocalDate.now());
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-            Optional<AccountInfo> account= accountRepository.findAccountInfoByAccountNumber(transaction.getAccountNumber());
-           if( account.isPresent() && account.get().getBalance()>=transaction.getAmount()){
-               Transaction transaction1=new Transaction();
-               transaction1.setType(TransactionType.WITHDRAWL);
-               transaction1.setAmount(transaction.getAmount());
-               transaction1.setFromAccount(transaction.getAccountNumber());
-               transaction1.setTransactionDate(LocalDate.now());
+                    User currentUser = userRepository.findUserByUsername(auth.getName());
 
-
-               Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-               User currentUser=userRepository.findUserByUsername(auth.getName());
-
-               // find current teller
+                    // find current teller
 
 
-               //branch.getBranchId()  check this line
-               transaction1.setBranchId(currentUser.getBranchName());
+                    //branch.getBranchId()  check this line
+                    transaction1.setBranchId(currentUser.getBranchName());
+                    account.get().setBalance(account.get().getBalance() - transaction.getAmount());
+                    account.get().setCurrentDate(LocalDate.now());
+                    accountRepository.save(account.get());
+                    transactionRepository.save(transaction1);
 
-               account.get().setBalance(account.get().getBalance()- transaction.getAmount());
-               account.get().setCurrentDate(LocalDate.now());
-                accountRepository.save(account.get());
-               transactionRepository.save(transaction1);
 
-           }
+                    // insert into account doc
+                    Optional<AccountInfo> accountInfo=accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
+                    if (accountInfo.isPresent()){
+                        List<Transaction> transactionList=accountInfo.get().getTransaction();
+                        transactionList.add(transaction);
+                        accountInfo.get().setTransaction(transactionList);
+                    }
 
-        } else{
-            System.out.println("Account not found");
+
+                    return new ResponseEntity<Transaction>(transaction, HttpStatus.OK);
+
+                }
+
+            } else {
+                System.out.println("Account not found");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-
+        return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
 
+//    @PostMapping("/findallcustomer")
+//    @PreAuthorize("hasRole('TELLER')")
+//    public ResponseEntity<Transaction> requestResponseEntity(){
+//
+//    }
+
+
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('TELLER')")
-    public double totalDeposit(){
+    public double totalDeposit() {
         return 0.0;
     }
 
     @GetMapping("/balance")
     @PreAuthorize("hasRole('TELLER')")
-    public double viewBalance(){
+    public double viewBalance() {
         return 0.0;
     }
 
-    @GetMapping("/customerss")
-    public ResponseEntity<List<Customer>> customer(){
-        List<Customer> customers = customerRepositor.findAll();
-        return new ResponseEntity<>(customers, HttpStatus.OK);
+    @PostMapping("/listOfCustomer")
+    @PreAuthorize("hasRole('TELLER')")
+    public ResponseEntity<List<Customer>> listOfCustomer() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userRepository.findUserByUsername(auth.getName());
+        List<Customer> customerList=customerRepositor.findCustomerByBranchName(currentUser.getBranchName());
+      return new ResponseEntity<>(customerList,HttpStatus.OK);
     }
+
+    @PostMapping("/listoftransaction")
+    @PreAuthorize("hasRole('TELLER')")
+    public ResponseEntity<List<Transaction>> listOfTransaction() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userRepository.findUserByUsername(auth.getName());
+        List<Transaction> transactionList=transactionRepository.findTransactionByBranchName(currentUser.getBranchName());
+        return new ResponseEntity<>(transactionList,HttpStatus.OK);
+    }
+
+    @PostMapping("/listofaccount")
+    @PreAuthorize("hasRole('TELLER')")
+    public ResponseEntity<List<AccountInfo>> listOfAccount() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userRepository.findUserByUsername(auth.getName());
+        List<AccountInfo> accountInfoList=accountRepository.findAccountInfoByBranchName(currentUser.getBranchName());
+        return new ResponseEntity<>(accountInfoList,HttpStatus.OK);
+    }
+
+
+
+
 }
