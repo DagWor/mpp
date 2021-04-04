@@ -15,6 +15,7 @@ import BoardAdmin from "./components/admin/board-admin.component";
 import Accounts from "./components/user/accounts";
 import Transactions from "./components/user/transaction.component";
 import TellerTransactions from "./components/teller/teller-transactions.component";
+import RegisterTeller from "./components/admin/create-teller.component";
 
 class App extends Component {
   constructor(props) {
@@ -94,7 +95,7 @@ class App extends Component {
                   </li>
               )}
 
-              {currentUser && !showTellerBoard && (
+              {currentUser && !showTellerBoard && !showAdminBoard && (
                   <li className="nav-item">
                     <Link to={"/customer/accounts"} className="nav-link">
                       Accounts
@@ -102,10 +103,18 @@ class App extends Component {
                   </li>
               )}
 
-              {currentUser && !showTellerBoard &&(
+              {currentUser && !showTellerBoard && !showAdminBoard &&(
                   <li className="nav-item">
                     <Link to={"/customer/transactions"} className="nav-link">
                       Transactions
+                    </Link>
+                  </li>
+              )}
+
+              {showAdminBoard && (
+                  <li className="nav-item">
+                    <Link to={"/admin/create-teller"} className="nav-link">
+                      Create Teller
                     </Link>
                   </li>
               )}
@@ -161,6 +170,7 @@ class App extends Component {
               <Route path="/customer/accounts" component={Accounts} />
               <Route path="/customer/transactions" component={Transactions} />
               <Route path="/teller/transactions" component={TellerTransactions} />
+              <Route path="/admin/create-teller" component={RegisterTeller} />
             </Switch>
           </div>
         </div>
