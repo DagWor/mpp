@@ -6,6 +6,7 @@ import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.*;
 import com.mongodb.WriteResult;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -225,6 +226,58 @@ public class AdminController {
 		List<User> tellers = userRepository.findUserByBranchNameAndRoles(admin.getBranchName(), roles);
 
 		return tellers.size();
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping("/tellers")
+	public ResponseEntity<List<User>> tellers() {
+		try {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			User admin = userRepository.findUserByUsername(auth.getName());
+
+			Set<Role> roles = new HashSet<>();
+			Role userRole = roleRepository.findByName(ERole.ROLE_TELLER)
+					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+			roles.add(userRole);
+
+			List<User> tellers = userRepository.findUserByBranchNameAndRoles(admin.getBranchName(), roles);
+
+			if(tellers.size() != 0){
+				return new ResponseEntity<>(tellers, HttpStatus.OK);
+			}
+			else return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} catch (NullPointerException e){
+			System.out.println(e.getMessage());
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping("/branch_details")
+	public ResponseEntity<?> details() {
+		try{
+			int customers = totalCustomer();
+			int tellers = totalTeller();
+			double withdrawal = totalWithdrawal();
+			double deposit = totalDeposit();
+
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("customers", customers);
+			jsonObject.put("tellers", tellers);
+			jsonObject.put("withdrawals", withdrawal);
+			jsonObject.put("deposit", deposit);
+
+			return new ResponseEntity<>(jsonObject, HttpStatus.OK);
+
+		} catch (NullPointerException e){
+			System.out.println(e.getMessage());
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
 	}
 
 }
