@@ -11,6 +11,7 @@ import com.example.mpp.repository.resources.UserWithIDRepository;
 import com.example.mpp.resources.CurrentAccountNumber;
 import com.example.mpp.resources.UserWithID;
 import com.example.mpp.security.jwt.JwtUtils;
+import com.example.mpp.services.AccountServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +63,8 @@ public class TellerController {
     private CurrentAccountNumberResource currentAccountNumberResource;
     @Autowired
     private CustomerRepository customerRepositor;
+    @Autowired
+    private AccountServices accountServices;
 
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-account")
@@ -383,9 +386,30 @@ public class TellerController {
                     accountRepository.save(accountInfo);
 
 
-                    Transaction transactions = new Transaction();
+                    Transaction transactions1 = new Transaction();
+                    transactions1.setType(TransactionType.DEPOSIT);
+                    transactions1.setAmount(transactionRequest.getAmount());
+                    transactions1.setFromAccount(transactionRequest.getToAccount());
+                    transactions1.setTransactionDate(LocalDate.now());
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    User currentUser = userRepository.findUserByUsername(auth.getName());
 
-                    transactionRepository.save(transactions);
+                    // find current teller
+                    //branch.getBranchId()  check this line
+                    transactions1.setBranchId(currentUser.getBranchName());
+                    transactionRepository.save(transactions1);
+
+                    // insert into account doc
+                    accountServices.addTransactionToAccount(transactionRequest.getToAccount(),transactions1);
+
+
+//                    Optional<AccountInfo> accountInfo1=accountRepository.
+//                            findAccountInfoByAccountNumber(transactionRequest.getFromAccount());
+//                    if (accountInfo1.isPresent()){
+//                        List<Transaction> transactionList=accountInfo1.get().getTransaction();
+//                        transactionList.add(transactions1);
+//                        accountInfo1.get().setTransaction(transactionList);
+//                    }
 
                 }
 
@@ -428,12 +452,14 @@ public class TellerController {
 
 
                     // insert into account doc
-                    Optional<AccountInfo> accountInfo=accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
-                    if (accountInfo.isPresent()){
-                        List<Transaction> transactionList=accountInfo.get().getTransaction();
-                        transactionList.add(transaction);
-                        accountInfo.get().setTransaction(transactionList);
-                    }
+                      accountServices.addTransactionToAccount(transaction.getToAccount(),transaction1);
+
+//                    Optional<AccountInfo> accountInfo=accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
+//                    if (accountInfo.isPresent()){
+//                        List<Transaction> transactionList=accountInfo.get().getTransaction();
+//                        transactionList.add(transaction);
+//                        accountInfo.get().setTransaction(transactionList);
+//                    }
 
 
                     return new ResponseEntity<Transaction>(transaction, HttpStatus.OK);
