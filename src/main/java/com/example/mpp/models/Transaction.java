@@ -12,7 +12,7 @@ public class Transaction {
     @Id
     private String transactionId;
     private LocalDate transactionDate;
-    @NotBlank
+
     private double amount;
     private int toAccount;
     private int fromAccount;
