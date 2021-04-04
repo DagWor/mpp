@@ -34,6 +34,8 @@ public class TellerServices {
     private TransactionRepository transactionRepository;
     @Autowired
     private AuthServices authServices;
+    @Autowired
+    private TellerServices tellerServices;
 
 
     public Transaction depositService(Transaction transactionRequest){
@@ -47,8 +49,8 @@ public class TellerServices {
             accountInfo.setCurrentDate(LocalDate.now());
             accountRepository.save(accountInfo);
 
-
-            Transaction transactions1 = new Transaction();
+         Transaction transactions1= saveTransaction(transactionRequest,TransactionType.DEPOSIT);
+          /*  Transaction transactions1 = new Transaction();
             transactions1.setType(TransactionType.DEPOSIT);
             transactions1.setAmount(transactionRequest.getAmount());
             transactions1.setFromAccount(transactionRequest.getToAccount());
@@ -57,7 +59,7 @@ public class TellerServices {
 
            String branchName = authServices.getCurrentUser().getBranchName();
            transactions1.setBranchId(branchName);
-            transactionRepository.save(transactions1);
+            transactionRepository.save(transactions1);*/
 
             // add transaction to account
             addTransactionToAccount(transactionRequest.getToAccount(), transactions1);
@@ -68,6 +70,8 @@ public class TellerServices {
       return null;
 
 }
+
+
 
 
 
@@ -119,4 +123,22 @@ public Transaction addTransactionToAccount(int accountNumber,Transaction transac
 
     return transaction;
 }
+
+public Transaction saveTransaction(Transaction transaction,TransactionType transactionType) {
+
+
+        if(transaction!=null && transactionType!=null){
+    Transaction transactions1 = new Transaction();
+    transactions1.setType(transactionType);
+    transactions1.setAmount(transaction.getAmount());
+    transactions1.setFromAccount(transaction.getToAccount());
+    transactions1.setTransactionDate(LocalDate.now());
+    String branchName = authServices.getCurrentUser().getBranchName();
+    transactions1.setBranchId(branchName);
+    transactionRepository.save(transactions1);
+    return transactions1;
+}
+        return null;
+}
+
 }

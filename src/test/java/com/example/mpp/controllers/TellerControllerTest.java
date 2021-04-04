@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
@@ -18,7 +19,9 @@ public class TellerControllerTest {
     private MockMvc mockMvc;
  @InjectMocks
     TellerController tellerController;
- @Before
+
+
+/* @Before
     public void setup() throws Exception{
   mockMvc= MockMvcBuilders.standaloneSetup(tellerController).build();
  }
@@ -26,8 +29,14 @@ public class TellerControllerTest {
     public void withdrawalTest() throws Exception{
    mockMvc.perform(MockMvcRequestBuilders.post("/api/teller/withdraw"))
            .andExpect(MockMvcResultMatchers.status().is(400));
- }
+ }*/
 
- 
+
+
+
+
+
+
+
 
 }
