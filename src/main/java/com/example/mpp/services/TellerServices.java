@@ -50,19 +50,7 @@ public class TellerServices {
             accountRepository.save(accountInfo);
 
          Transaction transactions1= saveTransaction(transactionRequest,TransactionType.DEPOSIT);
-          /*  Transaction transactions1 = new Transaction();
-            transactions1.setType(TransactionType.DEPOSIT);
-            transactions1.setAmount(transactionRequest.getAmount());
-            transactions1.setFromAccount(transactionRequest.getToAccount());
-            transactions1.setTransactionDate(LocalDate.now());
-
-
-           String branchName = authServices.getCurrentUser().getBranchName();
-           transactions1.setBranchId(branchName);
-            transactionRepository.save(transactions1);*/
-
-            // add transaction to account
-            addTransactionToAccount(transactionRequest.getToAccount(), transactions1);
+         addTransactionToAccount(transactionRequest.getToAccount(), transactions1);
 
             return transactions1;
 
@@ -86,18 +74,12 @@ public class TellerServices {
             Optional<AccountInfo> account = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
             if (account.isPresent() && account.get().getBalance() >= transaction.getAmount()) {
                 Transaction transaction1 = new Transaction();
-                transaction1.setType(TransactionType.WITHDRAWL);
-                transaction1.setAmount(transaction.getAmount());
-                transaction1.setFromAccount(transaction.getFromAccount());
-                transaction1.setTransactionDate(LocalDate.now());
-                String branchName = authServices.getCurrentUser().getBranchName();
-                transaction1.setBranchId(branchName);
+                Transaction transactions1= saveTransaction(transaction,TransactionType.WITHDRAWL);
                 //withdraw money
 
                 account.get().setBalance(account.get().getBalance() - transaction.getAmount());
                 account.get().setCurrentDate(LocalDate.now());
                 accountRepository.save(account.get());
-                transactionRepository.save(transaction1);
                 addTransactionToAccount(transaction.getFromAccount(), transaction1);
                 return transaction;
 
@@ -125,13 +107,15 @@ public Transaction addTransactionToAccount(int accountNumber,Transaction transac
 }
 
 public Transaction saveTransaction(Transaction transaction,TransactionType transactionType) {
-
-
         if(transaction!=null && transactionType!=null){
     Transaction transactions1 = new Transaction();
     transactions1.setType(transactionType);
     transactions1.setAmount(transaction.getAmount());
-    transactions1.setFromAccount(transaction.getToAccount());
+    if(transactionType==TransactionType.DEPOSIT){
+        transactions1.setToAccount(transaction.getToAccount());
+    }else if(transactionType==TransactionType.WITHDRAWL){
+        transactions1.setFromAccount(transaction.getFromAccount());
+    }
     transactions1.setTransactionDate(LocalDate.now());
     String branchName = authServices.getCurrentUser().getBranchName();
     transactions1.setBranchId(branchName);
