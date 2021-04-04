@@ -49,17 +49,32 @@ const vpassword = value => {
 export default class RegisterTeller extends Component {
     constructor(props) {
         super(props);
-        this.handleRegister = this.handleRegister.bind(this);
+        this.handleRegisterTeller = this.handleRegisterTeller.bind(this);
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangeEmail = this.onChangeEmail.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
+        this.onChangeFirstName = this.onChangeFirstName(this);
+        this.onChangeLastName = this.onChangeLastName(this);
+        this.onChangeSsn = this.onChangeSsn(this);
+        this.onChangeStreet = this.onChangeStreet(this);
+        this.onChangeCity = this.onChangeCity(this);
+        this.onChangePostalCode = this.onChangePostalCode(this);
+        this.onChangeZipCode = this.onChangeZipCode(this);
+        this.onChangeCountry = this.onChangeCountry(this);
+
 
         this.state = {
-            username: "",
-            email: "",
-            password: "",
-            successful: false,
-            message: ""
+            username:"",
+            email:"",
+            password:"",
+            firstName:"",
+            lastName:"",
+            ssn:0,
+            street:"",
+            city:"",
+            postalCode:"",
+            zipCode:0,
+            country:""
         };
     }
 
@@ -81,7 +96,56 @@ export default class RegisterTeller extends Component {
         });
     }
 
-    handleRegister(e) {
+    onChangeFirstName(e) {
+        this.setState({
+            firstName: e.target.value
+        });
+    }
+
+    onChangeLastName(e) {
+        this.setState({
+            lastName: e.target.value
+        });
+    }
+
+    onChangeSsn(e) {
+        this.setState({
+            ssn: e.target.value
+        });
+    }
+
+
+    onChangeStreet(e) {
+        this.setState({
+            street: e.target.value
+        });
+    }
+
+    onChangeCity(e) {
+        this.setState({
+            city: e.target.value
+        });
+    }
+
+    onChangePostalCode(e) {
+        this.setState({
+            postalCode: e.target.value
+        });
+    }
+
+    onChangeZipCode(e) {
+        this.setState({
+            zipCode: e.target.value
+        });
+    }
+
+    onChangeCountry(e) {
+        this.setState({
+            country: e.target.value
+        });
+    }
+
+    handleRegisterTeller(e) {
         e.preventDefault();
 
         this.setState({
@@ -92,10 +156,18 @@ export default class RegisterTeller extends Component {
         this.form.validateAll();
 
         if (this.checkBtn.context._errors.length === 0) {
-            AuthService.register(
+            AuthService.registerTeller(
                 this.state.username,
                 this.state.email,
-                this.state.password
+                this.state.password,
+                this.state.firstName,
+                this.state.lastName,
+                this.state.ssn,
+                this.state.street,
+                this.state.city,
+                this.state.postalCode,
+                this.state.zipCode,
+                this.state.country
             ).then(
                 response => {
                     this.setState({
@@ -131,7 +203,7 @@ export default class RegisterTeller extends Component {
                     />
 
                     <Form
-                        onSubmit={this.handleRegister}
+                        onSubmit={this.handleRegisterTeller}
                         ref={c => {
                             this.form = c;
                         }}
@@ -175,7 +247,103 @@ export default class RegisterTeller extends Component {
                                 </div>
 
                                 <div className="form-group">
-                                    <button className="btn btn-primary btn-block">Create Teller</button>
+                                    <label htmlFor="firstName">First Name</label>
+                                    <Input
+                                        type="text"
+                                        className="form-control"
+                                        name="firstName"
+                                        value={this.state.firstName}
+                                        onChange={this.onChangeFirstName}
+                                        validations={[required]}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="lastname">Last Name</label>
+                                    <Input
+                                        type="text"
+                                        className="form-control"
+                                        name="lastname"
+                                        value={this.state.lastName}
+                                        onChange={this.onChangeLastName}
+                                        validations={[required]}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="ssn">Social Security Number</label>
+                                    <Input
+                                        type="text"
+                                        className="form-control"
+                                        name="ssn"
+                                        value={this.state.ssn}
+                                        onChange={this.onChangeSsn}
+                                        validations={[required]}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="street">Street</label>
+                                    <Input
+                                        type="text"
+                                        className="form-control"
+                                        name="street"
+                                        value={this.state.street}
+                                        onChange={this.onChangeStreet}
+                                        validations={[required]}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="city">City</label>
+                                    <Input
+                                        type="text"
+                                        className="form-control"
+                                        name="city"
+                                        value={this.state.city}
+                                        onChange={this.onChangeCity}
+                                        validations={[required]}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="postalCode">Postal Code</label>
+                                    <Input
+                                        type="text"
+                                        className="form-control"
+                                        name="postalCode"
+                                        value={this.state.postalCode}
+                                        onChange={this.onChangePostalCode}
+                                        validations={[required]}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="zipCode">ZIP Code</label>
+                                    <Input
+                                        type="text"
+                                        className="form-control"
+                                        name="zipCode"
+                                        value={this.state.zipCode}
+                                        onChange={this.onChangeZipCode}
+                                        validations={[required]}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="country">Country</label>
+                                    <Input
+                                        type="text"
+                                        className="form-control"
+                                        name="country"
+                                        value={this.state.country}
+                                        onChange={this.onChangeCountry}
+                                        validations={[required]}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <button className="btn btn-primary btn-block">Create Customer</button>
                                 </div>
                             </div>
                         )}
