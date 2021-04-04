@@ -1,20 +1,8 @@
 import React, { Component } from "react";
 
 import UserService from "../../services/user.service";
-import {Button, Card, CardContent, Container, Typography} from "@material-ui/core";
-import Dialog from "@material-ui/core/Dialog";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import {Card, CardContent, Container, Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
-import Slide from "@material-ui/core/Slide";
-
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
-
 
 export default class Accounts extends Component {
     constructor(props) {
@@ -81,7 +69,6 @@ export default class Accounts extends Component {
 
 
     render() {
-        console.log("length is : ", this.state.content.length)
             return (
             <Container>
                 <Typography style={{fontSize: 20, alignSelf: "center"}} color="textPrimary">Accounts</Typography>
