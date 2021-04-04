@@ -4,9 +4,7 @@ import com.example.mpp.models.*;
 import com.example.mpp.payload.request.RegistorTellerRequest;
 import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
-import com.example.mpp.repository.BranchRepository;
-import com.example.mpp.repository.RoleRepository;
-import com.example.mpp.repository.UserRepository;
+import com.example.mpp.repository.*;
 import com.mongodb.WriteResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -42,6 +40,12 @@ public class AdminController {
 	BranchRepository branchRepository;
 
 	@Autowired
+	CustomerRepository customerRepository;
+
+	@Autowired
+	TransactionRepository transactionRepository;
+
+	@Autowired
 	MongoOperations mongoOperations;
 
 	@Autowired
@@ -49,7 +53,7 @@ public class AdminController {
 
 	MongoTemplate mongoTemplate;
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/create-teller")
 	public ResponseEntity<?> registerTeller(@Valid @RequestBody RegistorTellerRequest signUpRequest) {
 		try {
@@ -137,10 +141,90 @@ public class AdminController {
 		return result;
 	}*/
 
-	
-	@PostMapping("/total-withdrawal")
+
+	@GetMapping ("/total-withdrawal")
 	public double totalWithdrawal() {
-		return 0.0;
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User admin = userRepository.findUserByUsername(auth.getName());
+
+		Set<Role> roles = new HashSet<>();
+		Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+		roles.add(userRole);
+
+		List<Transaction> transactions = transactionRepository.findTransactionByBranchName(admin.getBranchName());
+
+		double withdrawalAmount = 0.0;
+
+		for (Transaction transaction : transactions){
+			if (transaction.getType() == TransactionType.WITHDRAWL){
+				withdrawalAmount += transaction.getAmount();
+			}
+		}
+
+		return withdrawalAmount;
+	}
+
+
+	@GetMapping ("/total-deposit")
+	public double totalDeposit() {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User admin = userRepository.findUserByUsername(auth.getName());
+
+		Set<Role> roles = new HashSet<>();
+		Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+		roles.add(userRole);
+
+		List<Transaction> transactions = transactionRepository.findTransactionByBranchName(admin.getBranchName());
+
+		double withdrawalAmount = 0.0;
+
+		for (Transaction transaction : transactions){
+			if (transaction.getType() == TransactionType.DEPOSIT){
+				withdrawalAmount += transaction.getAmount();
+			}
+		}
+
+		return withdrawalAmount;
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping("/total-customers")
+	public int totalCustomer() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User admin = userRepository.findUserByUsername(auth.getName());
+
+		Set<Role> roles = new HashSet<>();
+		Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+		roles.add(userRole);
+
+		List<User> tellers = userRepository.findUserByBranchNameAndRoles(admin.getBranchName(), roles);
+
+		return tellers.size();
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping("/total-tellers")
+	public int totalTeller() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User admin = userRepository.findUserByUsername(auth.getName());
+
+		Set<Role> roles = new HashSet<>();
+		Role userRole = roleRepository.findByName(ERole.ROLE_TELLER)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+		roles.add(userRole);
+
+		List<User> tellers = userRepository.findUserByBranchNameAndRoles(admin.getBranchName(), roles);
+
+		return tellers.size();
 	}
 
 }
