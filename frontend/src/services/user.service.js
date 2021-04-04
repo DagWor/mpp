@@ -33,7 +33,7 @@ class UserService {
     }
 
     getTellerTransactions = () => {
-        return axios.get(TELLER_API_URL + 'transactions', { headers: authHeader() });
+        return axios.get(TELLER_API_URL + 'listoftransaction', { headers: authHeader() });
     }
 }
 
