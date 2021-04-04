@@ -72,7 +72,7 @@ public class HeadOfficeController {
                 Address address = new Address(signUpRequest.getStreet(), signUpRequest.getCity(),
                         signUpRequest.getPostalCode(), signUpRequest.getZipCode(), signUpRequest.getCountry());
                 //
-                 // admin user address
+                // admin user address
                 Address adminAddress = new Address(signUpRequest.getAdminStreet(), signUpRequest.getAdminCity(),
                         signUpRequest.getAdminPostalCode(), signUpRequest.getAdminZipCode(), signUpRequest.getAdminCountry());
 
@@ -96,56 +96,33 @@ public class HeadOfficeController {
 
     }
 
+    @PreAuthorize("hasRole('HEAD_OFFICE')")
+    @PostMapping("/branches")
+    public ResponseEntity<List<Branch>> branches() {
+        return new ResponseEntity<>(branchRepository.findAll(), HttpStatus.OK);
+    }
 
-//    @PreAuthorize("hasRole('HEAD_OFFICE')")
-//    @PostMapping("/create-admin")
-//    public ResponseEntity<?> registerTeller(@Valid @RequestBody SignupRequest signUpRequest) {
-//        try {
-//            if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-//                return ResponseEntity
-//                        .badRequest()
-//                        .body(new MessageResponse("Username already taken"));
-//            }
-//            else
-//            if(userRepository.existsByUsername(signUpRequest.getEmail())){
-//                return ResponseEntity
-//                        .badRequest()
-//                        .body(new MessageResponse("Email already taken"));
-//            }
-//            else{
-//                Set<Role> roles = new HashSet<>();
-//                Role userRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-//                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-//                roles.add(userRole);
-//
-//                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//
-//                User _admin = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-//                        encoder.encode(signUpRequest.getPassword()));
-//                User headOffice = userRepository.findUserByUsername(auth.getName());
-//
-//                _admin.setRoles(roles);
-//                userRepository.save(_admin);
-//
-//                Branch branch = new Branch(_admin);
-//                branchRepository.save(branch);
-//
-//                List<Branch> branches = headOffice.getBranches();
-//                branches.add(branch);
-//                headOffice.setBranches(branches);
-//                userRepository.save(headOffice);
-//
-//                return new ResponseEntity<>(_admin, HttpStatus.CREATED);
-//            }
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @PreAuthorize("hasRole('HEAD_OFFICE')")
+    @PostMapping("/branch-managers")
+    public ResponseEntity<List<User>> admins() {
+        List<User> admins = new ArrayList<>();
+
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        roles.add(userRole);
+
+        for (Branch branch : branchRepository.findAll()){
+            for (User user : branch.getUser()) {
+                for (Role role : user.getRoles()){
+                    if (role.getName() == ERole.ROLE_ADMIN){
+                        admins.add(user);
+                    }
+                }
+            }
+        }
 
 
-
-
-
-
-
+        return new ResponseEntity<>(admins, HttpStatus.OK);
+    }
 }
