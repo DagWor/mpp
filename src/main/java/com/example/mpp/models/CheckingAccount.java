@@ -12,7 +12,7 @@ public class CheckingAccount extends AccountInfo implements Account{
 
     private double interestRate = 0.05;
 
-    public CheckingAccount(int accountNumber, double balance,String type ,LocalDate currentDate,int customerId) {
+    public CheckingAccount(int accountNumber, double balance,String type ,LocalDate currentDate,Customer customerId) {
          super(accountNumber, balance,type, currentDate, customerId);
 
         //accountInfo=new AccountInfo(accountNumber,balance,type,currentDate,customerId );
