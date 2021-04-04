@@ -117,9 +117,13 @@ public class CustomerController {
             List<AccountInfo> accounts = customer.getAccount();
             List<Transaction> transactions = new ArrayList<>();
 
+
+
             for (AccountInfo accountInfo : accounts){
-                for (Transaction transaction : accountInfo.getTransaction()){
-                    transactions.add(transaction);
+                if(accountInfo.getTransaction() != null){
+                    for (Transaction transaction : accountInfo.getTransaction()){
+                        transactions.add(transaction);
+                    }
                 }
             }
 
