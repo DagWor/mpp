@@ -187,7 +187,7 @@ public class TellerController {
                 transactions1.setTransactionDate(LocalDate.now());
                 transactions.add(transactions1);
                 transactionRepository.save(transactions1);
-
+                customerRepositor.save(customer);
                 AccountInfo accountInfo1 = new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
                         customerSignupRequest.getAccountTYpe()
                         , LocalDate.now(),customer.getId());
@@ -197,7 +197,7 @@ public class TellerController {
                 accountRepository.save(accountInfo1);
                 accountList.add(accountInfo1);
             //    customer.setAccount(accountList);
-//                customerRepositor.save(customer);
+                customerRepositor.save(customer);
 //                accountInfo1.setCustomer(customer);
 
                 //save to customer

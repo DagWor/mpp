@@ -54,21 +54,7 @@ public class TellerControllerTest {
      transaction.setFromAccount(10018);
      transaction.setAmount(505.02);
 
-     assertEquals(transaction,tellerServices.withdrawalService(transaction));
-
-
-
-
-
-
-//
-//  when(transactionRepository.save(transaction)).thenReturn(transaction);
-//  assertEquals(transaction,tellerServices.saveTransaction(transaction, TransactionType.WITHDRAWL));
-
-
-
-//        tellerServices.withdrawalService(transaction);
-//        verify(transactionRepository, times(1)).save(transaction1);
+ assertEquals(transaction,tellerServices.withdrawalService(transaction));
 
 
 

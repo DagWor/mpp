@@ -16,11 +16,7 @@ public class AccountInfo {
 
     private int accountNumber;
  //private  Customer customerNUmber;
-
-
-
-    private double balance;
-
+   private double balance;
     private String type;
     private LocalDate currentDate;
 //    private Customer customer;
