@@ -491,7 +491,7 @@ public class TellerController {
         return new ResponseEntity<>(transactionList,HttpStatus.OK);
     }
 
-    @PostMapping("/listoftransaction")
+    @PostMapping("/listofaccount")
     @PreAuthorize("hasRole('TELLER')")
     public ResponseEntity<List<AccountInfo>> listOfAccount() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
