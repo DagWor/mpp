@@ -97,30 +97,23 @@ public class HeadOfficeController {
     }
 
     @PreAuthorize("hasRole('HEAD_OFFICE')")
-    @PostMapping("/branches")
+    @GetMapping("/branches")
     public ResponseEntity<List<Branch>> branches() {
-        return new ResponseEntity<>(branchRepository.findAll(), HttpStatus.OK);
+        List<Branch> branches = new ArrayList<>();
+        branches = branchRepository.findAll();
+        return new ResponseEntity<>(branches, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('HEAD_OFFICE')")
-    @PostMapping("/branch-managers")
+    @GetMapping("/branch-managers")
     public ResponseEntity<List<User>> admins() {
-        List<User> admins = new ArrayList<>();
 
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         roles.add(userRole);
 
-        for (Branch branch : branchRepository.findAll()){
-            for (User user : branch.getUser()) {
-                for (Role role : user.getRoles()){
-                    if (role.getName() == ERole.ROLE_ADMIN){
-                        admins.add(user);
-                    }
-                }
-            }
-        }
+        List<User> admins = userRepository.findUsersByRoles(roles);
 
 
         return new ResponseEntity<>(admins, HttpStatus.OK);
