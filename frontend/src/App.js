@@ -22,7 +22,7 @@ class App extends Component {
     this.logOut = this.logOut.bind(this);
 
     this.state = {
-      showModeratorBoard: false,
+      showTellerBoard: false,
       showAdminBoard: false,
       currentUser: undefined,
     };
@@ -33,7 +33,6 @@ class App extends Component {
 
     if (user) {
       let roles = user.roles;
-      console.log(roles.includes("ROLE_TELLER"))
       this.setState({
         currentUser: user,
         showCustomerBoard: roles.includes("ROLE_USER"),
@@ -87,7 +86,15 @@ class App extends Component {
                   </li>
               )}
 
-              {currentUser && (
+              {showTellerBoard && (
+                  <li className="nav-item">
+                    <Link to={"/teller/accounts"} className="nav-link">
+                      Accounts
+                    </Link>
+                  </li>
+              )}
+
+              {currentUser && !showTellerBoard && (
                   <li className="nav-item">
                     <Link to={"/customer/accounts"} className="nav-link">
                       Accounts
@@ -95,7 +102,7 @@ class App extends Component {
                   </li>
               )}
 
-              {showCustomerBoard &&(
+              {currentUser && !showTellerBoard &&(
                   <li className="nav-item">
                     <Link to={"/customer/transactions"} className="nav-link">
                       Transactions
@@ -152,8 +159,8 @@ class App extends Component {
               <Route path="/mod" component={BoardTeller} />
               <Route path="/admin" component={BoardAdmin} />
               <Route path="/customer/accounts" component={Accounts} />
-              <Route path="/customer/transactions`" component={Transactions} />
-              <Route path="/teller/transactions`" component={TellerTransactions} />
+              <Route path="/customer/transactions" component={Transactions} />
+              <Route path="/teller/transactions" component={TellerTransactions} />
             </Switch>
           </div>
         </div>
