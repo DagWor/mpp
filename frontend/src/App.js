@@ -14,6 +14,7 @@ import BoardTeller from "./components/teller/board-teller.component";
 import BoardAdmin from "./components/admin/board-admin.component";
 import Accounts from "./components/user/accounts";
 import Transactions from "./components/user/transaction.component";
+import TellerTransactions from "./components/teller/teller-transactions.component";
 
 class App extends Component {
   constructor(props) {
@@ -35,7 +36,7 @@ class App extends Component {
       console.log(roles.includes("ROLE_TELLER"))
       this.setState({
         currentUser: user,
-        // showTellerBoard: this.roles.include("ROLE_TELLER"),
+        showCustomerBoard: roles.includes("ROLE_USER"),
         showTellerBoard: roles.includes("ROLE_TELLER"),
         showAdminBoard: roles.includes("ROLE_ADMIN"),
       });
@@ -47,7 +48,7 @@ class App extends Component {
   }
 
   render() {
-    const { currentUser, showTellerBoard, showAdminBoard } = this.state;
+    const { currentUser, showTellerBoard, showAdminBoard, showCustomerBoard } = this.state;
 
     return (
         <div>
@@ -94,9 +95,17 @@ class App extends Component {
                   </li>
               )}
 
-              {currentUser && (
+              {showCustomerBoard &&(
                   <li className="nav-item">
                     <Link to={"/customer/transactions"} className="nav-link">
+                      Transactions
+                    </Link>
+                  </li>
+              )}
+
+              {showTellerBoard &&(
+                  <li className="nav-item">
+                    <Link to={"/teller/transactions"} className="nav-link">
                       Transactions
                     </Link>
                   </li>
@@ -144,6 +153,7 @@ class App extends Component {
               <Route path="/admin" component={BoardAdmin} />
               <Route path="/customer/accounts" component={Accounts} />
               <Route path="/customer/transactions`" component={Transactions} />
+              <Route path="/teller/transactions`" component={TellerTransactions} />
             </Switch>
           </div>
         </div>
