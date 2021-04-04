@@ -4,6 +4,8 @@ import com.example.mpp.models.*;
 
 import com.example.mpp.payload.request.*;
 
+import com.example.mpp.payload.request.SignupRequest;
+import com.example.mpp.payload.request.WithdrawalRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.*;
 import com.example.mpp.repository.resources.CurrentAccountNumberResource;
@@ -61,7 +63,7 @@ public class TellerController {
     @Autowired
     private CurrentAccountNumberResource currentAccountNumberResource;
     @Autowired
-    private CustomerRepositor customerRepositor;
+    private CustomerRepository customerRepositor;
 
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-account")
