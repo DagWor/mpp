@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import AuthService from "../services/auth.service";
+import {Card, CardContent, Typography} from "@material-ui/core";
+import Divider from "@material-ui/core/Divider";
 
 export default class Profile extends Component {
     constructor(props) {
@@ -15,29 +17,20 @@ export default class Profile extends Component {
 
         return (
             <div className="container">
+
                 <header className="jumbotron">
                     <h3>
-                        <strong>{currentUser.username}</strong> Profile
+                        <strong>{currentUser.username}'s </strong> Profile
                     </h3>
+                    <Typography style={{fontSize: 14}} color="textSecondary" gutterBottom align={"center"}>
+                        <strong>Username : </strong> {currentUser.username}
+                    </Typography>
+                    <Divider variant="middle" />
+                    <Typography variant="body2" component="p" align={"center"}>
+                        <strong>Email Address : </strong> {currentUser.email}
+                        <br />
+                    </Typography>
                 </header>
-                <p>
-                    <strong>Token:</strong>{" "}
-                    {currentUser.accessToken.substring(0, 20)} ...{" "}
-                    {currentUser.accessToken.substr(currentUser.accessToken.length - 20)}
-                </p>
-                <p>
-                    <strong>Id:</strong>{" "}
-                    {currentUser.id}
-                </p>
-                <p>
-                    <strong>Email:</strong>{" "}
-                    {currentUser.email}
-                </p>
-                <strong>Authorities:</strong>
-                <ul>
-                    {currentUser.roles &&
-                    currentUser.roles.map((role, index) => <li key={index}>{role}</li>)}
-                </ul>
             </div>
         );
     }
