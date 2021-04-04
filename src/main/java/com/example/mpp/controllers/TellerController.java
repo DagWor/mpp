@@ -12,6 +12,7 @@ import com.example.mpp.resources.CurrentAccountNumber;
 import com.example.mpp.resources.UserWithID;
 import com.example.mpp.security.jwt.JwtUtils;
 import com.example.mpp.services.AccountServices;
+import com.example.mpp.services.TellerServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +66,9 @@ public class TellerController {
     private CustomerRepository customerRepositor;
     @Autowired
     private AccountServices accountServices;
+    @Autowired
+    private TellerServices tellerServices;
+
 
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-account")
@@ -215,7 +219,13 @@ public class TellerController {
     @PostMapping("/deposit")
     @PreAuthorize("hasRole('TELLER')")
     public ResponseEntity<?> makeDeposit(@RequestBody Transaction transactionRequest) {
-        try {
+        if(tellerServices.depositService(transactionRequest)==null)
+            return new ResponseEntity<>("deposit request is failed",HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(transactionRequest,HttpStatus.OK);
+
+    }
+        /*try {
             Optional<AccountInfo> crAccount = accountRepository.
                     findAccountInfoByAccountNumber(transactionRequest.getToAccount());
 
@@ -260,12 +270,19 @@ public class TellerController {
             System.out.println(e.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    }*/
 
     @PostMapping("/withdraw")
     @PreAuthorize("hasRole('TELLER')")
-    public ResponseEntity<Transaction> requestResponseEntity(@RequestBody Transaction transaction) {
-        try {
+    public ResponseEntity<?> requestResponseEntity(@RequestBody Transaction transaction) {
+
+      if(tellerServices.withdrawalService(transaction)==null)
+           return new ResponseEntity<>("withdrawal request is failed",HttpStatus.BAD_REQUEST);
+
+      return new ResponseEntity<>(transaction,HttpStatus.OK);
+
+    }
+      /*  try {
             if (accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())) {
 
                 Optional<AccountInfo> account = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
@@ -311,7 +328,7 @@ public class TellerController {
         }
         return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    }
+    }*/
 
 //    @PostMapping("/findallcustomer")
 //    @PreAuthorize("hasRole('TELLER')")

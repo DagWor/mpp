@@ -32,55 +32,77 @@ public class TellerServices {
 
     @Autowired
     private TransactionRepository transactionRepository;
-
-    public Transaction withdrawalService(Transaction transaction){
-
-        try {
-            if (accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())) {
-
-                Optional<AccountInfo> account = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
-                if (account.isPresent() && account.get().getBalance() >= transaction.getAmount()) {
-                    Transaction transaction1 = new Transaction();
-                    transaction1.setType(TransactionType.WITHDRAWL);
-                    transaction1.setAmount(transaction.getAmount());
-                    transaction1.setFromAccount(transaction.getFromAccount());
-                    transaction1.setTransactionDate(LocalDate.now());
-                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    @Autowired
+    private AuthServices authServices;
 
 
-                    User currentUser = userRepository.findUserByUsername(auth.getName());
-                    transaction1.setBranchId(currentUser.getBranchName());
-                    //withdraw money
+    public Transaction depositService(Transaction transactionRequest){
 
-                    account.get().setBalance(account.get().getBalance() - transaction.getAmount());
-                    account.get().setCurrentDate(LocalDate.now());
-                    accountRepository.save(account.get());
-                    transactionRepository.save(transaction1);
+      if (accountRepository.existsAccountInfoByAccountNumber(transactionRequest.getToAccount())) {
+            Optional<AccountInfo> crAccount = accountRepository.
+                    findAccountInfoByAccountNumber(transactionRequest.getToAccount());
+            AccountInfo accountInfo = crAccount.get();
+
+            accountInfo.setBalance(accountInfo.getBalance() + transactionRequest.getAmount());
+            accountInfo.setCurrentDate(LocalDate.now());
+            accountRepository.save(accountInfo);
 
 
-                    // insert into account doc
-                    //  accountServices.addTransactionToAccount(transaction.getToAccount(),transaction1);
+            Transaction transactions1 = new Transaction();
+            transactions1.setType(TransactionType.DEPOSIT);
+            transactions1.setAmount(transactionRequest.getAmount());
+            transactions1.setFromAccount(transactionRequest.getToAccount());
+            transactions1.setTransactionDate(LocalDate.now());
 
-                   /* Optional<AccountInfo> accountInfo = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
-                    if (accountInfo.isPresent()) {
-                        List<Transaction> transactionList = accountInfo.get().getTransaction();
-                        transactionList.add(transaction);
-                        accountInfo.get().setTransaction(transactionList);
-                    }*/
-                    addTransactionToAccount(transaction.getToAccount(),transaction1);
 
-                    return transaction;
+           String branchName = authServices.getCurrentUser().getBranchName();
+           transactions1.setBranchId(branchName);
+            transactionRepository.save(transactions1);
 
-                }
+            // add transaction to account
+            addTransactionToAccount(transactionRequest.getToAccount(), transactions1);
 
-            } else {
-                System.out.println("Account not found");
+            return transactions1;
+
+        }
+      return null;
+
+}
+
+
+
+
+
+
+    public Transaction withdrawalService(Transaction transaction) {
+
+
+        if (accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())) {
+
+            Optional<AccountInfo> account = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
+            if (account.isPresent() && account.get().getBalance() >= transaction.getAmount()) {
+                Transaction transaction1 = new Transaction();
+                transaction1.setType(TransactionType.WITHDRAWL);
+                transaction1.setAmount(transaction.getAmount());
+                transaction1.setFromAccount(transaction.getFromAccount());
+                transaction1.setTransactionDate(LocalDate.now());
+                String branchName = authServices.getCurrentUser().getBranchName();
+                transaction1.setBranchId(branchName);
+                //withdraw money
+
+                account.get().setBalance(account.get().getBalance() - transaction.getAmount());
+                account.get().setCurrentDate(LocalDate.now());
+                accountRepository.save(account.get());
+                transactionRepository.save(transaction1);
+                addTransactionToAccount(transaction.getFromAccount(), transaction1);
+                return transaction;
+
             }
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
         }
-        return transaction;
+
+        return null;
     }
 
 
