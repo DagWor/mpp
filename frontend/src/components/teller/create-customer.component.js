@@ -5,6 +5,7 @@ import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
 
 import TellerService from "../../services/teller.service";
+import {Typography} from "@material-ui/core";
 
 const required = value => {
     if (!value) {
@@ -207,6 +208,11 @@ export default class RegisterCustomer extends Component {
     render() {
         return (
             <div className="col-md-12">
+
+                <Typography style={{fontSize: 24}} color="textSecondary" gutterBottom align={"center"}>
+                    <strong>Create Customer Account</strong>
+                    <br />
+                </Typography>
                 <div className="card card-container">
                     <img
                         src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
