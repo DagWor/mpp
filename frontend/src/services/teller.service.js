@@ -25,6 +25,28 @@ class TellerService {
             });
     }
 
+    makeDeposit(amount, toAccount){
+        return axios.post(TELLER_API_URL + "deposit", {
+                amount,
+                toAccount
+        }, { headers : authHeader()})
+    }
+
+    makeWithdrawal(amount, fromAccount){
+        return axios.post(TELLER_API_URL + "withdrawal", {
+            amount,
+            fromAccount
+        }, { headers : authHeader()})
+    }
+
+    makeTransfer(amount, fromAccount, toAccount){
+        return axios.post(TELLER_API_URL + "transfer", {
+            amount,
+            fromAccount,
+            toAccount
+        }, { headers : authHeader()})
+    }
+
 }
 
 
