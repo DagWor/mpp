@@ -15,4 +15,5 @@ public interface AccountRepository extends MongoRepository<AccountInfo,Integer> 
     List<AccountInfo> findAllByCustomerId(int customerId);
     List<AccountInfo> findAccountInfoByBranchName(String branchName);
     List<AccountInfo> findAllByCustomer(Customer customerId);
+
 }
