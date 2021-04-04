@@ -39,6 +39,9 @@ public class TellerServices {
 
 
     public Transaction depositService(Transaction transactionRequest){
+      if (transactionRequest.getAmount()<=0)
+          return null;
+
 
       if (accountRepository.existsAccountInfoByAccountNumber(transactionRequest.getToAccount())) {
             Optional<AccountInfo> crAccount = accountRepository.
@@ -60,7 +63,8 @@ public class TellerServices {
 }
 
     public Transaction withdrawalService(Transaction transaction) {
-
+        if (transaction.getAmount()<=0)
+            return null;
 
         if (accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())) {
 
@@ -84,10 +88,7 @@ public class TellerServices {
         return null;
     }
 
-
-
-
-public Transaction addTransactionToAccount(int accountNumber,Transaction transaction) {
+    public Transaction addTransactionToAccount(int accountNumber,Transaction transaction) {
 
     Optional<AccountInfo> accountInfo = accountRepository.findAccountInfoByAccountNumber(accountNumber);
     if (accountInfo.isPresent()) {
@@ -99,7 +100,7 @@ public Transaction addTransactionToAccount(int accountNumber,Transaction transac
     return transaction;
 }
 
-public Transaction saveTransaction(Transaction transaction,TransactionType transactionType) {
+    public Transaction saveTransaction(Transaction transaction,TransactionType transactionType) {
         if(transaction!=null && transactionType!=null){
     Transaction transactions1 = new Transaction();
     transactions1.setType(transactionType);

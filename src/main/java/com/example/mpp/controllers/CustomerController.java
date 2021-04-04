@@ -48,7 +48,7 @@ public class CustomerController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findUserByUsername(auth.getName());
         Customer customer = customerRepository.findCustomerByUser(user);
-        AccountInfo accountInfo = accountRepository.findAccountInfoByCustomer(customer);
+        AccountInfo accountInfo = accountRepository.findAccountInfoByCustomerId(customer.getId());
         if (accountInfo.getAccountNumber() == transferRequest.getToAccount()) {
             transaction.setAmount(transferRequest.getAmount());
             transaction.setFromAccount(transferRequest.getFromAccount());

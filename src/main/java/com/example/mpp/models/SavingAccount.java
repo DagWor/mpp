@@ -6,8 +6,8 @@ import java.time.LocalDate;
 
 
 public class SavingAccount  extends AccountInfo implements Account {
-    public SavingAccount(int accountNumber, double balance, String type, LocalDate currentDate, Customer customer) {
-        super(accountNumber, balance, type, currentDate, customer);
+    public SavingAccount(int accountNumber, double balance, String type, LocalDate currentDate,String customerId) {
+        super(accountNumber, balance, type, currentDate,customerId);
     }
 
     @Override

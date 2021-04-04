@@ -17,36 +17,31 @@ public class AccountInfo {
     private int accountNumber;
  //private  Customer customerNUmber;
 
-    private int customerId;
+
 
     private double balance;
 
     private String type;
     private LocalDate currentDate;
-    private Customer customer;
+//    private Customer customer;
     private List<Transaction> transaction=new ArrayList<>();
     private String branchName ;
+    private String customerId;
 
     public AccountInfo(){
 
     }
 
-    public AccountInfo(int accountNumber, double balance, String type, LocalDate currentDate, Customer customer) {
+    public AccountInfo(int accountNumber, double balance, String type, LocalDate currentDate,String customerId) {
         this.transaction = new ArrayList<>();
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.type = type;
         this.currentDate = currentDate;
-        this.customer=customer;
-    }
-    public AccountInfo(int accountNumber, double balance, String type , LocalDate currentDate) {
-
-        this.accountNumber = accountNumber;
-        this.balance = balance;
-        this.type = type;
-
+        this.customerId=customerId;
 
     }
+
     public List<Transaction> getTransaction() {
         return transaction;
     }
@@ -59,21 +54,8 @@ public class AccountInfo {
     }
 
 
-    public Customer getCustomer() {
-        return customer;
-    }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-    public String getId() {
+       public String getId() {
         return id;
     }
 
@@ -118,5 +100,11 @@ public class AccountInfo {
         this.branchName = branchName;
     }
 
+    public String getCustomerId() {
+        return customerId;
+    }
 
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
 }

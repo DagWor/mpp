@@ -10,10 +10,10 @@ import java.util.Optional;
 public interface AccountRepository extends MongoRepository<AccountInfo,Integer> {
     Optional<AccountInfo> findAccountInfoByAccountNumber(int account);
     boolean existsAccountInfoByAccountNumber(int accountNumber);
-    AccountInfo findAccountInfoByCustomer(Customer customerId);
+   AccountInfo findAccountInfoByCustomerId(String customerId);
     Optional <AccountInfo> findAccountInfoByCustomerId(int customerId);
     List<AccountInfo> findAllByCustomerId(int customerId);
     List<AccountInfo> findAccountInfoByBranchName(String branchName);
-    List<AccountInfo> findAllByCustomer(Customer customerId);
+    List<AccountInfo> findAllByCustomerId(String customerId);
 
 }

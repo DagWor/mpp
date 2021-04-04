@@ -86,7 +86,7 @@ public class TellerController {
                     int accountNumber = currentAccountNumber.get().getCurrentAccountNumber() + 1;
                     if (!accountRepository.existsAccountInfoByAccountNumber(accountNumber)) {
                         AccountInfo accountInfo1 = new AccountInfo(accountNumber, accountInfo.getBalance(), accountInfo.getType()
-                                , accountInfo.getCurrentDate());
+                                , accountInfo.getCurrentDate(),customer.getId());
                         accountInfo1.setCurrentDate(LocalDate.now());
                         accountRepository.save(accountInfo1);
                         List<AccountInfo> accountList = customer.getAccount();
@@ -94,17 +94,17 @@ public class TellerController {
                         if (accountInfo.getType().equals("SAVING")) {
                             //super(accountNumber, balance,type, currentDate, customerId);
                             SavingAccount account = new SavingAccount(currentAccountNumber.get().getCurrentAccountNumber() + 1,
-                                    accountInfo.getBalance(), "SAVING", LocalDate.now(), customer);
+                                    accountInfo.getBalance(), "SAVING", LocalDate.now(),customer.getId());
                             accountList.add(account);
                             customer.setAccount(accountList);
-                            account.setCustomer(customer);
+
 
                         } else {
                             CheckingAccount account = new CheckingAccount(currentAccountNumber.get().getCurrentAccountNumber() + 1,
-                                    accountInfo.getBalance(), "CHECKING", LocalDate.now(), customer);
+                                    accountInfo.getBalance(), "CHECKING", LocalDate.now(), customer.getId());
                             accountList.add(account);
                             customer.setAccount(accountList);
-                            account.setCustomer(customer);
+
 
                         }
 
@@ -190,15 +190,15 @@ public class TellerController {
 
                 AccountInfo accountInfo1 = new AccountInfo(accountNumber, customerSignupRequest.getIntialAmount(),
                         customerSignupRequest.getAccountTYpe()
-                        , LocalDate.now());
+                        , LocalDate.now(),customer.getId());
                 accountInfo1.setCurrentDate(LocalDate.now());
                 accountInfo1.setTransaction(transactions);
                 accountInfo1.setBranchName(currentUser.getBranchName());
                 accountRepository.save(accountInfo1);
                 accountList.add(accountInfo1);
-                customer.setAccount(accountList);
-                customerRepositor.save(customer);
-                accountInfo1.setCustomer(customer);
+            //    customer.setAccount(accountList);
+//                customerRepositor.save(customer);
+//                accountInfo1.setCustomer(customer);
 
                 //save to customer
                 userWithIDRepository.save(new UserWithID(customer.getId(), user.getUsername()));
@@ -227,52 +227,7 @@ public class TellerController {
         return new ResponseEntity<>(transactionRequest,HttpStatus.OK);
 
     }
-        /*try {
-            Optional<AccountInfo> crAccount = accountRepository.
-                    findAccountInfoByAccountNumber(transactionRequest.getToAccount());
 
-
-            if (crAccount.isPresent()) {
-                AccountInfo accountInfo = crAccount.get();
-
-                accountInfo.setBalance(accountInfo.getBalance() + transactionRequest.getAmount());
-                accountInfo.setCurrentDate(LocalDate.now());
-                accountRepository.save(accountInfo);
-
-
-                Transaction transactions1 = new Transaction();
-                transactions1.setType(TransactionType.DEPOSIT);
-                transactions1.setAmount(transactionRequest.getAmount());
-                transactions1.setFromAccount(transactionRequest.getToAccount());
-                transactions1.setTransactionDate(LocalDate.now());
-
-
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User currentUser = userRepository.findUserByUsername(auth.getName());
-
-                // find current teller
-                //branch.getBranchId()  check this line
-                transactions1.setBranchId(currentUser.getBranchName());
-                transactionRepository.save(transactions1);
-
-                // insert into account doc
-                // accountServices.addTransactionToAccount(transactionRequest.getToAccount(),transactions1);
-                Optional<AccountInfo> accountInfo1 = accountRepository.findAccountInfoByAccountNumber(transactionRequest.getFromAccount());
-                if (accountInfo1.isPresent()) {
-                    List<Transaction> transactionList = accountInfo1.get().getTransaction();
-                    transactionList.add(transactionRequest);
-                    accountInfo1.get().setTransaction(transactionList);
-                }
-
-            }
-
-            return new ResponseEntity<>(transactionRequest, HttpStatus.OK);
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }*/
 
     @PostMapping("/withdraw")
     @PreAuthorize("hasRole('TELLER')")
@@ -284,66 +239,7 @@ public class TellerController {
       return new ResponseEntity<>(transaction,HttpStatus.OK);
 
     }
-      /*  try {
-            if (accountRepository.existsAccountInfoByAccountNumber(transaction.getFromAccount())) {
 
-                Optional<AccountInfo> account = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
-                if (account.isPresent() && account.get().getBalance() >= transaction.getAmount()) {
-                    Transaction transaction1 = new Transaction();
-                    transaction1.setType(TransactionType.WITHDRAWL);
-                    transaction1.setAmount(transaction.getAmount());
-                    transaction1.setFromAccount(transaction.getFromAccount());
-                    transaction1.setTransactionDate(LocalDate.now());
-                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-                    User currentUser = userRepository.findUserByUsername(auth.getName());
-                    transaction1.setBranchId(currentUser.getBranchName());
-                    //withdraw money
-
-                    account.get().setBalance(account.get().getBalance() - transaction.getAmount());
-                    account.get().setCurrentDate(LocalDate.now());
-                    accountRepository.save(account.get());
-                    transactionRepository.save(transaction1);
-
-
-                    // insert into account doc
-                    //  accountServices.addTransactionToAccount(transaction.getToAccount(),transaction1);
-
-                    Optional<AccountInfo> accountInfo = accountRepository.findAccountInfoByAccountNumber(transaction.getFromAccount());
-                    if (accountInfo.isPresent()) {
-                        List<Transaction> transactionList = accountInfo.get().getTransaction();
-                        transactionList.add(transaction);
-                        accountInfo.get().setTransaction(transactionList);
-                    }
-
-
-                    return new ResponseEntity<Transaction>(transaction, HttpStatus.OK);
-
-                }
-
-            } else {
-                System.out.println("Account not found");
-            }
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
-
-    }*/
-
-//    @PostMapping("/findallcustomer")
-//    @PreAuthorize("hasRole('TELLER')")
-//    public ResponseEntity<Transaction> requestResponseEntity(){
-//
-//    }
-
-
-//    @PostMapping("/transfer")
-//    @PreAuthorize("hasRole('TELLER')")
-//    public double totalDeposit() {
-//        return 0.0;
-//    }
 
     @GetMapping("/balance")
     @PreAuthorize("hasRole('TELLER')")
@@ -368,6 +264,8 @@ public class TellerController {
         List<Transaction> transactionList = transactionRepository.findTransactionByBranchName(currentUser.getBranchName());
         return new ResponseEntity<>(transactionList, HttpStatus.OK);
     }
+
+
 
     @PostMapping("/listofaccount")
     @PreAuthorize("hasRole('TELLER')")
