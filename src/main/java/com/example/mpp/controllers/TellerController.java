@@ -61,7 +61,7 @@ public class TellerController {
     @Autowired
     private CurrentAccountNumberResource currentAccountNumberResource;
     @Autowired
-    private CustomerRepositor customerRepositor;
+    private CustomerRepository customerRepositor;
 
     @PreAuthorize("hasRole('TELLER')")
     @PostMapping("/create-account")
@@ -364,10 +364,11 @@ public class TellerController {
 
             if (crAccount.isPresent()) {
                 AccountInfo accountInfo = crAccount.get();
+
                 Account account = null;
                 if (accountInfo.getType().equals("CHECKING")) {
-//                    account = new CheckingAccount(transactionRequest.getAccountNumber(),
-//                            accountInfo.getBalance(),"CHECKING",LocalDate.now(),accountInfo.getCustomerId());
+                    account = new CheckingAccount(transactionRequest.getFromAccount(),
+                            accountInfo.getBalance(),"CHECKING",LocalDate.now(),accountInfo.getCustomer());
 
                 } else if (accountInfo.getType().equals("SAVING")) {
 //                    account = new SavingAccount(transactionRequest.getAccountNumber(),accountInfo.getBalance(),"SAVING",LocalDate.now(),
@@ -381,16 +382,12 @@ public class TellerController {
                     accountInfo.setCurrentDate(LocalDate.now());
                     accountRepository.save(accountInfo);
 
-//                    Transaction transactions = new DepositTransaction(LocalDate.now(), transactionRequest.getAmount(),
-//                            transactionRequest.getToAccount());
-//                    depositRepository.save(transactions);
+
+                    Transaction transactions = new Transaction();
+
+                    transactionRepository.save(transactions);
 
                 }
-
-                //public DepositTransaction( LocalDate transactionDate, @NotBlank double amount, int toAccount, int branchId, TransactionType type) {
-
-
-                //transation to be saved
 
                 return new ResponseEntity<>(accountInfo, HttpStatus.OK);
             } else {
@@ -420,10 +417,10 @@ public class TellerController {
                     User currentUser = userRepository.findUserByUsername(auth.getName());
 
                     // find current teller
-
-
                     //branch.getBranchId()  check this line
                     transaction1.setBranchId(currentUser.getBranchName());
+                    //withdraw money
+
                     account.get().setBalance(account.get().getBalance() - transaction.getAmount());
                     account.get().setCurrentDate(LocalDate.now());
                     accountRepository.save(account.get());

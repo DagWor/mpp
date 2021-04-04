@@ -12,22 +12,15 @@ public class Customer {
     @Id
     private String id;
     private int customerId;
-
     private User user;
-
-
-
-    private List<AccountInfo > account;
+    private List<AccountInfo> account;
     private String branchName;
 
+    public Customer(){
+    }
 
-
-
-
-    public Customer(  User user) {
-
+    public Customer(User user) {
         this.user = user;
-
     }
 
     public String getId() {
@@ -57,6 +50,7 @@ public class Customer {
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
+
     public String getBranchName() {
         return branchName;
     }
