@@ -486,7 +486,7 @@ public class TellerController {
         return 0.0;
     }
 
-    @PostMapping("/listOfCustomer")
+    @GetMapping("/listOfCustomer")
     @PreAuthorize("hasRole('TELLER')")
     public ResponseEntity<List<Customer>> listOfCustomer() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -495,7 +495,7 @@ public class TellerController {
       return new ResponseEntity<>(customerList,HttpStatus.OK);
     }
 
-    @PostMapping("/listoftransaction")
+    @GetMapping("/listoftransaction")
     @PreAuthorize("hasRole('TELLER')")
     public ResponseEntity<List<Transaction>> listOfTransaction() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -504,7 +504,7 @@ public class TellerController {
         return new ResponseEntity<>(transactionList,HttpStatus.OK);
     }
 
-    @PostMapping("/listofaccount")
+    @GetMapping("/listofaccount")
     @PreAuthorize("hasRole('TELLER')")
     public ResponseEntity<List<AccountInfo>> listOfAccount() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
