@@ -39,6 +39,7 @@ class App extends Component {
         showCustomerBoard: roles.includes("ROLE_USER"),
         showTellerBoard: roles.includes("ROLE_TELLER"),
         showAdminBoard: roles.includes("ROLE_ADMIN"),
+        showSuperAdminBoard: roles.includes("ROLE_HEAD_OFFICE"),
       });
     }
   }
@@ -48,7 +49,7 @@ class App extends Component {
   }
 
   render() {
-    const { currentUser, showTellerBoard, showAdminBoard, showCustomerBoard } = this.state;
+    const { currentUser, showTellerBoard, showAdminBoard, showSuperAdminBoard } = this.state;
 
     return (
         <div>
@@ -63,7 +64,7 @@ class App extends Component {
                 </Link>
               </li>
 
-              {showTellerBoard && (
+              {showTellerBoard && !showSuperAdminBoard && (
                   <li className="nav-item">
                     <Link to={"/teller"} className="nav-link">
                       Teller Board
@@ -95,6 +96,14 @@ class App extends Component {
                   </li>
               )}
 
+              {showTellerBoard && (
+                  <li className="nav-item">
+                    <Link to={"/teller/accounts"} className="nav-link">
+                      Create Account
+                    </Link>
+                  </li>
+              )}
+
               {currentUser && !showTellerBoard && !showAdminBoard && (
                   <li className="nav-item">
                     <Link to={"/customer/accounts"} className="nav-link">
@@ -111,9 +120,25 @@ class App extends Component {
                   </li>
               )}
 
+              {showSuperAdminBoard &&(
+                  <li className="nav-item">
+                    <Link to={"/customer/transactions"} className="nav-link">
+                      Branches
+                    </Link>
+                  </li>
+              )}
+
+              {showSuperAdminBoard &&(
+                  <li className="nav-item">
+                    <Link to={"/customer/transactions"} className="nav-link">
+                      Branch Managers
+                    </Link>
+                  </li>
+              )}
+
               {showAdminBoard && (
                   <li className="nav-item">
-                    <Link to={"/admin/create-teller"} className="nav-link">
+                    <Link to={"/create-teller"} className="nav-link">
                       Create Teller
                     </Link>
                   </li>
@@ -170,7 +195,7 @@ class App extends Component {
               <Route path="/customer/accounts" component={Accounts} />
               <Route path="/customer/transactions" component={Transactions} />
               <Route path="/teller/transactions" component={TellerTransactions} />
-              <Route path="/admin/create-teller" component={RegisterTeller} />
+              <Route path="/create-teller" component={RegisterTeller} />
             </Switch>
           </div>
         </div>
