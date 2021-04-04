@@ -18,6 +18,8 @@ Branch Manager
 
 Teller Board
 ![image](https://user-images.githubusercontent.com/40207646/113501030-1f193000-94e8-11eb-8fe9-321bf65c2568.png)
+![image](https://user-images.githubusercontent.com/40207646/113501616-22aeb600-94ec-11eb-827e-cd1a7e91133f.png)
+
 
 
 
