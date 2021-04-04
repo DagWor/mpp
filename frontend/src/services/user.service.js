@@ -4,6 +4,7 @@ import paramController from "./paramController";
 
 const API_URL = 'http://localhost:8080/api/test/';
 const CUSTOMER_API_URL = 'http://localhost:8080/api/customer/';
+const ADMIN_API_URL = 'http://localhost:8080/api/admin/';
 const TELLER_API_URL = 'http://localhost:8080/api/teller/';
 
 class UserService {
@@ -20,9 +21,9 @@ class UserService {
         return axios.get(API_URL + 'mod', { headers: authHeader() });
     }
 
-    getAdminBoard() {
-        return axios.get(API_URL + 'admin', { headers: authHeader() });
-    }
+    // getAdminBoard() {
+    //     return axios.get(ADMIN_API_URL + 'admin', { headers: authHeader() });
+    // }
 
     getCustomerAccounts() {
         return axios.get(CUSTOMER_API_URL + 'accounts', { headers: authHeader() });
@@ -34,6 +35,10 @@ class UserService {
 
     getTellerTransactions = () => {
         return axios.get(TELLER_API_URL + 'listoftransaction', { headers: authHeader() });
+    }
+
+    createTeller = (something) => {
+        return axios.post(TELLER_API_URL + 'create-teller', {something}, { headers: authHeader() });
     }
 }
 
