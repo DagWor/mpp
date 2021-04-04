@@ -4,6 +4,7 @@ import paramController from "./paramController";
 
 const API_URL = 'http://localhost:8080/api/test/';
 const CUSTOMER_API_URL = 'http://localhost:8080/api/customer/';
+const TELLER_API_URL = 'http://localhost:8080/api/teller/';
 
 class UserService {
 
@@ -28,7 +29,11 @@ class UserService {
     }
 
     getCustomerTransactions = () => {
-        return axios.get(CUSTOMER_API_URL + `transactions`, { headers: authHeader() });
+        return axios.get(CUSTOMER_API_URL + 'transactions', { headers: authHeader() });
+    }
+
+    getTellerTransactions = () => {
+        return axios.get(TELLER_API_URL + 'transactions', { headers: authHeader() });
     }
 }
 
