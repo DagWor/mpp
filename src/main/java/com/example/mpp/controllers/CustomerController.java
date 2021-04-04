@@ -50,7 +50,6 @@ public class CustomerController {
         Customer customer = customerRepository.findCustomerByUser(user);
         AccountInfo accountInfo = accountRepository.findAccountInfoByCustomer(customer);
         if (accountInfo.getAccountNumber() == transferRequest.getToAccount()) {
-            transaction.setCustomer(customer);
             transaction.setAmount(transferRequest.getAmount());
             transaction.setFromAccount(transferRequest.getFromAccount());
             transaction.setToAccount(transferRequest.getToAccount());
