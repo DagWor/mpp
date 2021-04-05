@@ -310,16 +310,15 @@ public class TellerController {
                         .badRequest()
                         .body(new MessageResponse("not enough balance"));
             } else {
+
                 AccountInfo toAccount1 = toAccount.get();
                 AccountInfo fromAccount1 = fromAccount.get();
-
 
                 fromAccount1.setBalance(fromAccount1.getBalance() - transaction.getAmount());
                 fromAccount1.setCurrentDate(LocalDate.now());
 
                 toAccount1.setBalance(toAccount1.getBalance() + transaction.getAmount());
                 toAccount1.setCurrentDate(LocalDate.now());
-
 
                 Transaction transaction1 = new Transaction();
                 transaction1.setType(TransactionType.TRANSFER);
@@ -338,32 +337,21 @@ public class TellerController {
 
                 List<Transaction> transactionList = toAccount.get().getTransaction();
 
-                    transactionList.add(transaction1);
-                    toAccount.get().setTransaction(transactionList);
-
-
-
+                transactionList.add(transaction1);
+                toAccount.get().setTransaction(transactionList);
 
                 List<Transaction> transactionList1 = fromAccount.get().getTransaction();
 
-                    transactionList1.add(transaction1);
-                    fromAccount.get().setTransaction(transactionList1);
-
+                transactionList1.add(transaction1);
+                fromAccount.get().setTransaction(transactionList1);
 
                 accountRepository.save(fromAccount1);
                 accountRepository.save(toAccount1);
 
                 return new ResponseEntity<>(transaction, HttpStatus.OK);
-
-
             }
-
-
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
-
     }
 }
