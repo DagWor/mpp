@@ -100,16 +100,9 @@ public class TellerServices {
     return transaction;
 }
 
-    public Transaction saveTransaction(Transaction transaction,TransactionType transactionType) {
-        if(transaction!=null && transactionType!=null){
-    Transaction transactions1 = new Transaction();
+    public Transaction saveTransaction(Transaction transactions1,TransactionType transactionType) {
+        if(transactions1!=null && transactionType!=null){
     transactions1.setType(transactionType);
-    transactions1.setAmount(transaction.getAmount());
-    if(transactionType==TransactionType.DEPOSIT){
-        transactions1.setToAccount(transaction.getToAccount());
-    }else if(transactionType==TransactionType.WITHDRAWL){
-        transactions1.setFromAccount(transaction.getFromAccount());
-    }
     transactions1.setTransactionDate(LocalDate.now());
     String branchName = authServices.getCurrentUser().getBranchName();
     transactions1.setBranchId(branchName);
