@@ -195,7 +195,7 @@ class App extends Component {
               {!showSuperAdminBoard && showTellerBoard &&(
                   <li className="nav-item">
                     <Link to={"/teller/transfer"} className="nav-link">
-                      Perform Transform
+                      Perform a Transfer
                     </Link>
                   </li>
               )}
