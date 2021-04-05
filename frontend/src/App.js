@@ -10,8 +10,6 @@ import Register from "./components/register.component";
 import Home from "./components/home.component";
 import Profile from "./components/profile.component";
 import BoardUser from "./components/user/board-user.component";
-import BoardTeller from "./components/teller/board-teller.component";
-import BoardAdmin from "./components/admin/board-admin.component";
 import Accounts from "./components/user/accounts";
 import Transactions from "./components/user/transaction.component";
 import TellerTransactions from "./components/teller/teller-transactions.component";
@@ -63,7 +61,7 @@ class App extends Component {
     console.log(currentUser, showTellerBoard, showAdminBoard, showSuperAdminBoard, showCustomerBoard);
     return (
         <div>
-          <nav className="navbar navbar-expand navbar-dark bg-dark">
+          <nav className="navbar navbar-expand navbar-dark bg-dark"  style={{backgroundColor: "blue"}}>
             <Link to={"/"} className="navbar-brand">
               Trust Bank Inc.
             </Link>
