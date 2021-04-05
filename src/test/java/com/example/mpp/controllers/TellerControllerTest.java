@@ -53,8 +53,7 @@ public class TellerControllerTest {
      Transaction transaction =new Transaction();
      transaction.setFromAccount(10018);
      transaction.setAmount(505.02);
-
- assertEquals(transaction,tellerServices.withdrawalService(transaction));
+     assertEquals(transaction,tellerServices.withdrawalService(transaction));
 
 
 
