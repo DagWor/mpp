@@ -52,22 +52,6 @@ export default class Accounts extends Component {
         );
     }
 
-    handleClickOpen() {
-        this.setState({
-            open: true,
-            setOpen: true
-        })
-    };
-
-    handleClose = () => {
-        console.log("there")
-        this.setState({
-            open: false,
-            setOpen: false
-        })
-    };
-
-
     render() {
             return (
             <Container>

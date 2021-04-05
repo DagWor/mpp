@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   sample:
-    container_name: sample
+    container_name: frontend
     build:
       context: .
       dockerfile: Dockerfile

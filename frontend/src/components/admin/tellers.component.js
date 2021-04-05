@@ -2,14 +2,7 @@ import React, { Component } from "react";
 
 import AdminService from "../../services/admin.service";
 import {Button, Card, CardContent, Container, Typography} from "@material-ui/core";
-import Dialog from "@material-ui/core/Dialog";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
 import Divider from "@material-ui/core/Divider";
-import Slide from "@material-ui/core/Slide";
-import {Message} from "@material-ui/icons";
 
 
 export default class AdminTellers extends Component {

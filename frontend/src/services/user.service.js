@@ -1,6 +1,5 @@
 import axios from 'axios';
 import authHeader from './auth-header';
-import paramController from "./paramController";
 
 const API_URL = 'http://localhost:8080/api/test/';
 const CUSTOMER_API_URL = 'http://localhost:8080/api/customer/';

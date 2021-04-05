@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import AuthService from "../services/auth.service";
-import {Card, CardContent, Typography} from "@material-ui/core";
+import {Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 
 export default class Profile extends Component {
