@@ -12,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Optional;
+
 
 @Component
 @Service
@@ -27,6 +27,8 @@ public class AuthServices {
             User currentUser= userRepository.findUserByUsername(auth.getName());
             return currentUser;
         }
+
+
 
 
 
