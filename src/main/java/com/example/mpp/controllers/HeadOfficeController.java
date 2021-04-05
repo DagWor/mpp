@@ -4,10 +4,7 @@ import com.example.mpp.models.*;
 import com.example.mpp.payload.request.CreateBranchRequest;
 import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
-import com.example.mpp.repository.BranchRepository;
-import com.example.mpp.repository.RoleRepository;
-import com.example.mpp.repository.TransactionRepository;
-import com.example.mpp.repository.UserRepository;
+import com.example.mpp.repository.*;
 import com.mongodb.WriteResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -34,19 +31,23 @@ import java.util.*;
 public class HeadOfficeController {
 
     @Autowired
-    UserRepository userRepository;
+    private  UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    BranchRepository branchRepository;
+    private BranchRepository branchRepository;
 
     @Autowired
-    MongoOperations mongoOperations;
+    private  MongoOperations mongoOperations;
 
     @Autowired
-    PasswordEncoder encoder;
+    private PasswordEncoder encoder;
+
+    @Autowired
+            private CustomerRepository customerRepository;
+
 
     MongoTemplate mongoTemplate;
     @Autowired
@@ -102,8 +103,7 @@ public class HeadOfficeController {
     @PreAuthorize("hasRole('HEAD_OFFICE')")
     @GetMapping("/branches")
     public ResponseEntity<List<Branch>> branches() {
-        List<Branch> branches = new ArrayList<>();
-        branches = branchRepository.findAll();
+        List<Branch> branches = branchRepository.findAll();
         return new ResponseEntity<>(branches, HttpStatus.OK);
     }
 
@@ -127,7 +127,9 @@ public class HeadOfficeController {
     @GetMapping("/total-customers")
     public int totalCustomer() {
 
-        List<User> tellers = userRepository.findAll();
+
+
+        List<Customer> tellers = customerRepository.findAll();
 
         return tellers.size();
     }
