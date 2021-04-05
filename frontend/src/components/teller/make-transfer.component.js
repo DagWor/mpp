@@ -22,7 +22,7 @@ export default class TellerTransfer extends Component {
         super(props);
         this.handleMakeTransfer = this.handleMakeTransfer.bind(this);
         this.onChangeAmount = this.onChangeAmount.bind(this);
-        this.onChangeFromAccount = this.onChangeFromAccount().bind(this);
+        this.onChangeFromAccount = this.onChangeFromAccount.bind(this);
         this.onChangeToAccount = this.onChangeToAccount.bind(this);
 
 
@@ -64,8 +64,8 @@ export default class TellerTransfer extends Component {
         if (this.checkBtn.context._errors.length === 0) {
             TellerService.makeTransfer(
                 this.state.amount,
-                this.state.toAccount,
-                this.state.fromAccount
+                this.state.fromAccount,
+                this.state.toAccount
             ).then(
                 response => {
                     this.setState({
@@ -144,7 +144,7 @@ export default class TellerTransfer extends Component {
                                         className="form-control"
                                         name="fromAccount"
                                         value={this.state.password}
-                                        onChange={this.onChangePassword}
+                                        onChange={this.onChangeFromAccount}
                                         validations={[required]}
                                     />
                                 </div>
