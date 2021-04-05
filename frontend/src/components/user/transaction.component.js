@@ -2,13 +2,6 @@ import React, { Component } from "react";
 
 import UserService from "../../services/user.service";
 import {Card, CardContent, Container, Typography} from "@material-ui/core";
-import Slide from "@material-ui/core/Slide";
-
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
-
 
 export default class Transactions extends Component {
     constructor(props) {

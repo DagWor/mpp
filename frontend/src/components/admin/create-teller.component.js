@@ -47,16 +47,6 @@ const vpassword = value => {
     }
 };
 
-const vfirstname = value => {
-    if (value.length < 6 || value.length > 40) {
-        return (
-            <div className="alert alert-danger" role="alert">
-                The first Name must be between 6 and 40 characters.
-            </div>
-        );
-    }
-};
-
 export default class RegisterTeller extends Component {
     constructor(props) {
         super(props);
