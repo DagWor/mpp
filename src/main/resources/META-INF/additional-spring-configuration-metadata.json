@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "Dotenv",
+      "type": "java.lang.String",
+      "description": "Description for Dotenv."
+    },
+    {
+      "name": "dotenv.get(“MONGO_URI”);",
+      "type": "java.lang.String",
+      "description": "Description for dotenv.get(“MONGO_URI”);."
+    }
+  ] }
