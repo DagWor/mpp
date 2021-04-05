@@ -6,6 +6,7 @@ import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.BranchRepository;
 import com.example.mpp.repository.RoleRepository;
+import com.example.mpp.repository.TransactionRepository;
 import com.example.mpp.repository.UserRepository;
 import com.mongodb.WriteResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class HeadOfficeController {
     PasswordEncoder encoder;
 
     MongoTemplate mongoTemplate;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
 
     @PreAuthorize("hasRole('HEAD_OFFICE')")
@@ -118,4 +121,54 @@ public class HeadOfficeController {
 
         return new ResponseEntity<>(admins, HttpStatus.OK);
     }
+
+
+    @PreAuthorize("hasRole('HEAD_OFFICE')")
+    @GetMapping("/total-customers")
+    public int totalCustomer() {
+
+        List<User> tellers = userRepository.findAll();
+
+        return tellers.size();
+    }
+
+    @PreAuthorize("hasRole('HEAD_OFFICE')")
+    @GetMapping ("/total-withdrawal")
+    public double totalWithdrawal() {
+
+
+
+        List<Transaction> transactions = transactionRepository.findAll();
+
+        double withdrawalAmount = 0.0;
+
+        for (Transaction transaction : transactions){
+            if (transaction.getType() == TransactionType.WITHDRAWL){
+                withdrawalAmount += transaction.getAmount();
+            }
+        }
+
+        return withdrawalAmount;
+    }
+
+
+    @PreAuthorize("hasRole('HEAD_OFFICE')")
+    @GetMapping ("/total-deposit")
+    public double totalDeposit() {
+
+        List<Transaction> transactions = transactionRepository.findAll();
+
+        double withdrawalAmount = 0.0;
+
+        for (Transaction transaction : transactions){
+            if (transaction.getType() == TransactionType.DEPOSIT){
+                withdrawalAmount += transaction.getAmount();
+            }
+        }
+
+        return withdrawalAmount;
+    }
+
+
+
 }
