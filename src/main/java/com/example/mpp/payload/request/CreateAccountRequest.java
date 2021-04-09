@@ -1,6 +1,5 @@
 package com.example.mpp.payload.request;
 
-import com.example.mpp.models.Customer;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
@@ -8,12 +7,8 @@ import java.time.LocalDate;
 public class CreateAccountRequest {
     @Id
     private String id;
-
-
     private String username;
-
     private double balance;
-
     private String type;
     private LocalDate currentDate;
 

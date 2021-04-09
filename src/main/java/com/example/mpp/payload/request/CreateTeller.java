@@ -1,8 +1,5 @@
 package com.example.mpp.payload.request;
 
-
-import com.example.mpp.models.Branch;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

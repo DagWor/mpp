@@ -1,8 +1,6 @@
 package com.example.mpp.models;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
@@ -28,20 +26,7 @@ public class User {
 
   private String branchName;
 
-
-
   private Address address;
-
-
-
-
-  public float getBalance() {
-    return balance;
-  }
-
-  public void setBalance(float balance) {
-    this.balance = balance;
-  }
 
   @NotBlank
   @Size(max = 120)
@@ -51,8 +36,6 @@ public class User {
 
   private Set<Role> roles = new HashSet<>();
 
-
-
   public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email,
               @NotBlank @Size(max = 120) String password,  Set<Role> roles) {
     this.username = username;
@@ -61,16 +44,22 @@ public class User {
     this.roles = roles;
   }
 
-  public User() {
-  }
-
-
-
   public User(String username, String email, String password) {
     this.username = username;
     this.email = email;
     this.password = password;
     this.balance = 0.0f;
+  }
+
+  public User() {
+  }
+
+  public float getBalance() {
+    return balance;
+  }
+
+  public void setBalance(float balance) {
+    this.balance = balance;
   }
 
   public Address getAddress() {
@@ -88,6 +77,7 @@ public class User {
   public void setBranchName(String branchName) {
     this.branchName = branchName;
   }
+
   public String getId() {
     return id;
   }
@@ -127,12 +117,4 @@ public class User {
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
-//
-//  public List<Branch> getBranches() {
-//    return branches;
-//  }
-//
-//  public void setBranches(List<Branch> branch) {
-//    this.branches = branch;
-//  }
 }

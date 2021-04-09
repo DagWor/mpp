@@ -2,25 +2,15 @@ package com.example.mpp.controllers;
 
 import com.example.mpp.models.*;
 import com.example.mpp.payload.request.CreateBranchRequest;
-import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.*;
-import com.mongodb.WriteResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -40,16 +30,11 @@ public class HeadOfficeController {
     private BranchRepository branchRepository;
 
     @Autowired
-    private  MongoOperations mongoOperations;
-
-    @Autowired
     private PasswordEncoder encoder;
 
     @Autowired
-            private CustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
 
-
-    MongoTemplate mongoTemplate;
     @Autowired
     private TransactionRepository transactionRepository;
 

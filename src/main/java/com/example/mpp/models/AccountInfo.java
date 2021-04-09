@@ -3,7 +3,6 @@ package com.example.mpp.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +14,9 @@ public class AccountInfo {
     private String id;
 
     private int accountNumber;
- //private  Customer customerNUmber;
-   private double balance;
+    private double balance;
     private String type;
     private LocalDate currentDate;
-//    private Customer customer;
     private List<Transaction> transaction=new ArrayList<>();
     private String branchName ;
     private String customerId;
@@ -51,11 +48,9 @@ public class AccountInfo {
 
 
 
-       public String getId() {
+    public String getId() {
         return id;
     }
-
-
 
     public int getAccountNumber() {
         return accountNumber;

@@ -2,17 +2,12 @@ package com.example.mpp.controllers;
 
 import com.example.mpp.models.*;
 import com.example.mpp.payload.request.RegistorTellerRequest;
-import com.example.mpp.payload.request.SignupRequest;
 import com.example.mpp.payload.response.MessageResponse;
 import com.example.mpp.repository.*;
-import com.mongodb.WriteResult;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -53,6 +47,17 @@ public class AdminController {
 	PasswordEncoder encoder;
 
 	MongoTemplate mongoTemplate;
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Authentication findAuth(){
+		return SecurityContextHolder.getContext().getAuthentication();
+	}
+
+	Set<Role> roles = new HashSet<>();
+
+	public User findUser(Authentication auth){
+		return userRepository.findUserByUsername(auth.getName());
+	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/create-teller")
@@ -93,14 +98,6 @@ public class AdminController {
 
 				Branch branch = branchRepository.findBranchByBranchName(findUser.getBranchName());
 
-
-//				List<User> tellers = new ArrayList<>();
-//				tellers = branch.getBranchTellers();
-//				tellers.add(_user);
-//
-//				branch.setBranchTellers(tellers);
-
-
 				_user.setBranchName(findUser.getBranchName());
 				_user.setAddress(address);
 				_user.setRoles(roles);
@@ -116,40 +113,12 @@ public class AdminController {
 		}
 	}
 
-/*	@GetMapping("/tellers/{id}")
-	@PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OFFICE')")
-	public ResponseEntity<List<User>> getAllBranchTellers(@PathVariable("id") String id) {
-		ResponseEntity<List<User>> result;
-		try {
-
-			Optional<Branch> branch = branchRepository.findById(id);
-			Role userRole = roleRepository.findByName(ERole.ROLE_TELLER)
-					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-
-			Branch branch1 = branch.get();
-			List<User> users = branch1.getBranchTellers();
-
-
-			if (users.isEmpty()) {
-				result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			} else {
-				result = new ResponseEntity<>(users, HttpStatus.OK);
-			}
-
-		} catch (Exception e) {
-			result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return result;
-	}*/
-
 
 	@GetMapping ("/total-withdrawal")
 	public double totalWithdrawal() {
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User admin = userRepository.findUserByUsername(auth.getName());
+		User admin = findUser(findAuth());
 
-		Set<Role> roles = new HashSet<>();
 		Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
@@ -172,10 +141,8 @@ public class AdminController {
 	@GetMapping ("/total-deposit")
 	public double totalDeposit() {
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User admin = userRepository.findUserByUsername(auth.getName());
+		User admin = userRepository.findUserByUsername(findAuth().getName());
 
-		Set<Role> roles = new HashSet<>();
 		Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
@@ -214,10 +181,8 @@ public class AdminController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/total-tellers")
 	public int totalTeller() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User admin = userRepository.findUserByUsername(auth.getName());
+		User admin = userRepository.findUserByUsername(findAuth().getName());
 
-		Set<Role> roles = new HashSet<>();
 		Role userRole = roleRepository.findByName(ERole.ROLE_TELLER)
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
@@ -232,10 +197,7 @@ public class AdminController {
 	@GetMapping("/tellers")
 	public ResponseEntity<List<User>> tellers() {
 		try {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			User admin = userRepository.findUserByUsername(auth.getName());
-
-			Set<Role> roles = new HashSet<>();
+			User admin = findUser(findAuth());
 			Role userRole = roleRepository.findByName(ERole.ROLE_TELLER)
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
@@ -263,12 +225,16 @@ public class AdminController {
 			int tellers = totalTeller();
 			double withdrawal = totalWithdrawal();
 			double deposit = totalDeposit();
+			String customer = "customers";
+			String teller = "customers";
+			String withdraw = "customers";
+			String deposits = "customers";
 
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("customers", customers);
-			jsonObject.put("tellers", tellers);
-			jsonObject.put("withdrawals", withdrawal);
-			jsonObject.put("deposit", deposit);
+			jsonObject.put(customer, customers);
+			jsonObject.put(teller, tellers);
+			jsonObject.put(withdraw, withdrawal);
+			jsonObject.put(deposits, deposit);
 
 			return new ResponseEntity<>(jsonObject, HttpStatus.OK);
 

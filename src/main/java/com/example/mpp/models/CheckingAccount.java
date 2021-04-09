@@ -15,7 +15,6 @@ public class CheckingAccount extends AccountInfo implements Account{
     public CheckingAccount(int accountNumber, double balance,String type ,LocalDate currentDate,String customerId) {
          super(accountNumber, balance,type, currentDate,customerId);
 
-        //accountInfo=new AccountInfo(accountNumber,balance,type,currentDate,customerId );
     }
 
     @Override

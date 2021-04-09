@@ -42,34 +42,15 @@ public class Admin extends User{
         this.lastName=lastName;
     }
 
-//    public List<Customer> getBranchCustomers()
-//    {
-//        List<Customer> customerList=branch.getCustomers();
-//        return  customerList;
-//    }
-//
-//    public List<Teller> getBranchTellers(int branchId)
-//    {
-//        List<Teller> tellerList=branch.getTellers();
-//        return  tellerList;
-//    }
-
-    public double getTotalDeposit()
-    {   double totalDeposits = 0.0;
-        return totalDeposits;
+    public double getTotalDeposit() {
+        return 0.0;
     }
 
-    public double getTotalWithdrawal()
-    {
-        double totalWithdrawal=0.0;
-        return totalWithdrawal;
+    public double getTotalWithdrawal() {
+        return 0.0;
     }
 
-    public List<Transaction> getTransactions(LocalDate startDate, LocalDate endDate)
-    {
-        List<Transaction>  transactionList=new ArrayList<>();
-        List<Customer> customers;
-
-        return  transactionList;
+    public List<Transaction> getTransactions(LocalDate startDate, LocalDate endDate) {
+        return new ArrayList<>();
     }
 }

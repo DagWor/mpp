@@ -18,8 +18,6 @@ public class CreateBranchRequest {
 
     private String branchName;
 
-
-    //    private Set<String> roles;
     @NotBlank
     private String  firstName;
     @NotBlank

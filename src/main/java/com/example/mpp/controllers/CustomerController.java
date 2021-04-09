@@ -3,14 +3,11 @@ package com.example.mpp.controllers;
 import com.example.mpp.models.*;
 import com.example.mpp.payload.request.TransferRequest;
 import com.example.mpp.repository.*;
-import com.example.mpp.repository.resources.UserWithIDRepository;
-import com.example.mpp.resources.UserWithID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,10 +32,6 @@ public class CustomerController {
 
     @Autowired
     private CustomerRepository customerRepository;
-
-    @Autowired
-    private UserWithIDRepository userWithIDRepository;
-
 
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -97,14 +90,6 @@ public class CustomerController {
         else return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    /*@GetMapping("/account/{accountNumber}")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<Transaction>> transactions(@PathVariable("accountNumber") int accountNumber) {
-        Optional<AccountInfo> accountInfo = accountRepository.findAccountInfoByAccountNumber(accountNumber);
-        List<Transaction> transactions = transactionRepository.findTransactionsByAccountNumber(accountInfo.get().getAccountNumber());
-        return new ResponseEntity<>(transactions, HttpStatus.OK);
-    }*/
-
     @GetMapping("/transactions")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<Transaction>> transactions(){
@@ -121,9 +106,7 @@ public class CustomerController {
 
             for (AccountInfo accountInfo : accounts){
                 if(accountInfo.getTransaction() != null){
-                    for (Transaction transaction : accountInfo.getTransaction()){
-                        transactions.add(transaction);
-                    }
+                    transactions.addAll(accountInfo.getTransaction());
                 }
             }
 

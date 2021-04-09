@@ -3,7 +3,6 @@ package com.example.mpp.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Document(collection="Transaction")
@@ -16,12 +15,11 @@ public class Transaction {
     private double amount;
     private int toAccount;
     private int fromAccount;
-//    private int branchId;
     private String branchName;
-  private TransactionType type;
-  public Transaction(){
+    private TransactionType type;
+    public Transaction(){
 
-  }
+    }
 
     public Transaction( LocalDate transactionDate, double amount, int toAccount, int fromAccount, String branchId,TransactionType type) {
 
